@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>HR人力资源系统 · 蓝锦科技 / 紫弦科技</title>
+<style>
+:root{
+  --bg:#f4f6fa; --card:#ffffff; --line:#e5e9f0; --txt:#1f2733; --muted:#6b7686;
+  --blue:#2563eb; --blue-l:#eff4ff; --green:#16a34a; --green-l:#ecfdf3;
+  --red:#dc2626; --red-l:#fef2f2; --amber:#d97706; --amber-l:#fffbeb;
+  --purple:#7c3aed; --purple-l:#f5f3ff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;background:var(--bg);color:var(--txt);font-size:14px}
+.app{display:flex;min-height:100vh}
+.side{width:200px;background:#101828;color:#cbd5e1;flex-shrink:0;display:flex;flex-direction:column}
+.logo{padding:18px 16px;font-size:16px;font-weight:600;color:#fff;border-bottom:1px solid #1f2b40}
+.logo small{display:block;font-size:11px;color:#93a3b8;font-weight:400;margin-top:4px}
+.navgrp{padding:12px 10px 4px;font-size:11px;color:#7c8aa0;letter-spacing:1px}
+.nav{padding:10px 16px;cursor:pointer;border-left:3px solid transparent;font-size:13px}
+.nav:hover{background:#182337;color:#fff}
+.nav.on{background:#182337;color:#fff;border-left-color:var(--blue)}
+.side .foot{margin-top:auto;padding:12px 16px;font-size:11px;color:#7c8aa0;line-height:1.7}
+.main{flex:1;min-width:0;padding:16px 20px 40px}
+.orgbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.orgtab{padding:8px 22px;border-radius:8px;background:var(--card);border:1px solid var(--line);cursor:pointer;font-weight:600}
+.orgtab.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.orgbar .meta{margin-left:auto;font-size:12px;color:var(--muted)}
+.btn{padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13px}
+.btn:hover{border-color:var(--blue);color:var(--blue)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:14px;align-items:center}
+.filters label{font-size:12px;color:var(--muted)}
+.filters select,.filters input{padding:6px 10px;border:1px solid var(--line);border-radius:7px;font-size:13px;background:#fff;color:var(--txt)}
+.filters input{width:150px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.kpi .t{font-size:12px;color:var(--muted);margin-bottom:6px}
+.kpi .v{font-size:26px;font-weight:700}
+.kpi .s{font-size:11px;color:var(--muted);margin-top:4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.panel h3{font-size:14px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel h3::before{content:"";width:4px;height:14px;background:var(--blue);border-radius:2px;display:inline-block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:1100px){.grid2{grid-template-columns:1fr}}
+.donut-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:1200px){.donut-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.donut-grid{grid-template-columns:1fr}}
+.donut-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px}
+.donut-box h4{margin:0 0 8px;font-size:13px;color:#334155}
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.donut-wrap svg{flex:0 0 auto}
+.donut-legend{flex:1;min-width:0}
+.donut-legend .lg{display:flex;align-items:center;gap:6px;font-size:12px;color:#475569;padding:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donut-legend .lg:hover{color:#1d4ed8}
+.donut-legend .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+.donut-legend b{color:#0f172a}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;text-align:left;padding:8px 10px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0}
+td{padding:7px 10px;border-bottom:1px solid #f0f2f6;white-space:nowrap}
+tr:hover td{background:#f8fafc}
+.twrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:8px}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px}
+.tg-blue{background:var(--blue-l);color:var(--blue)} .tg-green{background:var(--green-l);color:var(--green)}
+.tg-red{background:var(--red-l);color:var(--red)} .tg-amber{background:var(--amber-l);color:var(--amber)}
+.tg-purple{background:var(--purple-l);color:var(--purple)} .tg-gray{background:#f1f5f9;color:#64748b}
+.bar{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12px}
+.bar .n{width:130px;text-align:right;color:var(--muted);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{flex:1;background:#f1f5f9;border-radius:4px;height:18px;position:relative}
+.bar .fill{height:100%;border-radius:4px;background:var(--blue);min-width:2px}
+.bar .val{width:56px;flex-shrink:0}
+.insight{background:#f8fafc;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.8}
+.insight.warn{border-left-color:var(--red);background:var(--red-l)}
+.insight.good{border-left-color:var(--green);background:var(--green-l)}
+.insight.tip{border-left-color:var(--amber);background:var(--amber-l)}
+.insight b{color:var(--txt)}
+.tree{font-size:13px;line-height:1.9;padding:4px 0;max-height:480px;overflow:auto}
+.tree-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:linear-gradient(90deg,var(--blue-l),#fff);border:1px solid #dbe6ff;border-radius:9px;padding:10px 14px;margin-bottom:10px;font-size:14px}
+.tree-head b{font-size:18px;color:var(--blue)}
+.tree-head .tree-note{font-size:11px;color:var(--muted);margin-left:4px}
+.tnode{position:relative}
+.trow{display:flex;align-items:center;gap:7px;padding:3px 8px;border-radius:7px;cursor:default;transition:background .12s}
+.trow.has-kids{cursor:pointer}
+.trow:hover{background:#f1f5fb}
+.tw{width:16px;text-align:center;color:var(--muted);font-size:11px;flex-shrink:0;user-select:none}
+.tw.leaf{color:#cbd5e1}
+.dn{font-weight:500;color:var(--txt)}
+.trow.has-kids>.dn{font-weight:600}
+.tnode .tnode .dn{font-weight:400}
+.cnt{margin-left:auto;font-size:11px;color:var(--muted);background:#f1f5f9;border-radius:20px;padding:1px 10px;white-space:nowrap}
+.cnt b{color:var(--blue);font-weight:700}
+.cnt i{color:var(--green);font-style:normal;font-weight:700}
+.cnt-sep{color:#cbd5e1;margin:0 4px}
+.tchild{margin-left:10px;border-left:1px dashed #e2e8f0;padding-left:6px}
+.tchild.collapsed{display:none}
+.hbadge{font-size:20px;font-weight:700}
+.modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:99}
+.modal{background:#fff;border-radius:12px;max-width:680px;width:92%;padding:20px;max-height:85vh;overflow:auto}
+.modal h3{margin-bottom:10px}
+.modal textarea{width:100%;height:180px;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;font-family:Consolas,monospace}
+.modal .row{display:flex;gap:10px;margin-top:12px;justify-content:flex-end}
+.note{font-size:12px;color:var(--muted);line-height:1.7;margin:8px 0}
+tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid var(--line)}
+.secgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.teamcard{border:1px solid var(--line);border-radius:10px;padding:14px}
+.teamcard .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.teamcard .nm{font-weight:600;font-size:14px}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.mini div{background:#f8fafc;border-radius:8px;padding:8px;text-align:center}
+.mini .mv{font-size:17px;font-weight:700}
+.mini .mt{font-size:11px;color:var(--muted)}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+.v4table{border-collapse:collapse;width:100%;margin:6px 0 16px;font-size:13px;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.v4table th,.v4table td{border:1px solid var(--line);padding:7px 9px;text-align:center}
+.v4table thead th{background:#eef2fb;color:#33415c;font-weight:600}
+.v4table .v4l{text-align:left;font-weight:600;background:#f8fafc;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.v4table .v4c{cursor:pointer;color:#1d4ed8}
+.v4table .v4c:hover{background:#e8f0ff}
+.v4table .v4t{font-weight:700;background:#f8fafc}
+.v4table .v4all td{background:#eef6ff;font-weight:700;border-top:2px solid #c7d6f5}
+.subhead{font-size:14px;font-weight:700;color:#2b3a55;margin:18px 0 4px;border-left:4px solid #3b82f6;padding-left:8px}
+</style>
+</head>
+<body>
+
+<div id="hrGate" style="position:fixed;inset:0;background:#101828;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Microsoft YaHei','PingFang SC',sans-serif">
+  <div style="background:#fff;border-radius:14px;padding:32px 36px;width:330px;box-shadow:0 10px 40px rgba(0,0,0,.35)">
+    <div style="font-size:18px;font-weight:700;color:#101828;margin-bottom:4px">HR人力数据看板</div>
+    <div style="font-size:12px;color:#6b7686;margin-bottom:20px">蓝锦科技 / 紫弦科技 · 请输入账号密码</div>
+    <input id="hrUser" placeholder="账号" autocomplete="username" style="width:100%;padding:10px 12px;border:1px solid #e5e9f0;border-radius:8px;margin-bottom:12px;font-size:14px;box-sizing:border-box">
+    <input id="hrPass" type="password" placeholder="密码" autocomplete="current-password" style="width:100%;padding:10px 12px;border:1px solid #e5e9f0;border-radius:8px;margin-bottom:14px;font-size:14px;box-sizing:border-box">
+    <button id="hrBtn" style="width:100%;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">登录</button>
+    <div id="hrErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="side">
+    <div class="logo">HR人力资源系统<small id="side-org">蓝锦科技 / 紫弦科技</small></div>
+    <div class="navgrp">人力数据</div>
+    <div class="nav on" data-view="overview">总数据看板</div>
+    <div class="nav" data-view="view1">视图1 · 人员明细分析</div>
+    <div class="nav" data-view="view2">视图2 · 负责人维度</div>
+    <div class="nav" data-view="view3">视图3 · 客服P级人力/仓储加班时长情况</div>
+    <div class="nav" data-view="view4">视图4 · 项目人力结构分析</div>
+    <div class="navgrp">招聘数据</div>
+    <div class="nav" data-view="recruit">视图1 · 当月入离职 / 离职原因</div>
+    <div class="nav" data-view="recruit2">视图2 · 招聘邀约到面情况</div>
+    <div class="foot">数据源：钉钉智能人事<br>每日 9:00 自动更新<br><span id="gen-at"></span></div>
+  </div>
+  <div class="main">
+    <div class="orgbar">
+      <div class="orgtab on" data-org="lanjin">蓝锦科技</div>
+      <div class="orgtab" data-org="zixian">紫弦科技</div>
+      <button class="btn" id="btn-reason" onclick="openReasonModal()">导入离职原因表</button>
+      <button class="btn" id="btn-ext" onclick="openExtModal()">导入年龄/性别补充表</button>
+      <div class="meta" id="meta-info"></div>
+      <div class="meta" id="user-bar" style="margin-left:12px"></div>
+    </div>
+    <div class="filters">
+      <label>时间</label>
+      <select id="f-time">
+        <option value="all">全部</option><option value="day">今日</option><option value="week">本周</option>
+        <option value="month" selected>本月</option><option value="d30">近30天</option><option value="lastm">上月</option>
+      </select>
+      <label id="lb-proj">项目</label><select id="f-proj"></select>
+      <label id="lb-rank">P级</label><select id="f-rank"></select>
+      <label>岗位</label><select id="f-pos"></select>
+      <input id="f-name" placeholder="人员搜索（姓名）">
+      <button class="btn" onclick="resetFilters()">重置</button>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3>导入离职原因表（当前组织：<span id="modal-org"></span>）</h3>
+    <div class="note">从钉钉后台【智能人事→员工关系→离职管理】导出表格后：<br>
+    ① 在Excel中全选数据区域（含表头）复制，直接粘贴到下方文本框；或将文件另存为 CSV 后选择文件。<br>
+    ② 表头需包含"姓名"列；可选列：离职原因 / 职级(级别) / 岗位(职位) / 年龄 / 入职日期。按姓名+入职日期匹配（无入职日期则按姓名）。</div>
+    <input type="file" id="reason-file" accept=".csv,.txt">
+    <textarea id="reason-paste" placeholder="在此粘贴Excel复制的内容（Tab分隔）..."></textarea>
+    <div class="row">
+      <button class="btn" onclick="clearReason()">清空已导入</button>
+      <button class="btn" onclick="closeReasonModal()">取消</button>
+      <button class="btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="importReason()">导入</button>
+    </div>
+    <div class="note" id="import-status"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="ext-bg">
+  <div class="modal">
+    <h3>导入年龄/性别补充表（当前组织：<span id="ext-org"></span>）</h3>
+    <div class="note">钉钉API对年龄/出生日期做了隐私脱敏，无法自动抓取。请从钉钉后台【智能人事→员工管理→花名册】导出后：<br>
+    ① 在Excel中全选（含表头）复制粘贴到下方；或另存为CSV后选择文件。<br>
+    ② 表头需含"姓名"列；可选列：年龄 / 出生日期 / 性别。按姓名匹配合并，导入后长期生效（存于本机浏览器）。</div>
+    <input type="file" id="ext-file" accept=".csv,.txt">
+    <textarea id="ext-paste" placeholder="在此粘贴Excel复制的内容（Tab分隔）：姓名  年龄  性别 ..."></textarea>
+    <div class="row">
+      <button class="btn" onclick="clearExt()">清空已导入</button>
+      <button class="btn" onclick="closeExtModal()">取消</button>
+      <button class="btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="importExt()">导入</button>
+    </div>
+    <div class="note" id="ext-status"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="people-bg" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal" style="max-width:900px">
+    <h3 id="people-title"></h3>
+    <div class="twrap" style="max-height:60vh" id="people-table"></div>
+    <div class="row"><button class="btn" onclick="document.getElementById('people-bg').style.display='none'">关闭</button></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="admin-bg" style="display:none" onclick="if(event.target===this)this.style.display='none'"></div>
+
+<script>
+// 破 CDN 对入口页（无 query）的永久缓存：先同步拉 version.json（带时间戳→必回源）拿最新版本号，
+// 再用该版本号动态加载数据文件。这样即使 index.html 本身是 CDN 旧缓存，数据也永远是最新的。
+(function(){
+  var v = '202609230914'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  try {
+    var x = new XMLHttpRequest();
+    x.open('GET', 'version.json?t=' + Date.now(), false);
+    x.send();
+    if (x.status === 200) {
+      var j = JSON.parse(x.responseText);
+      if (j && j.v) { v = j.v; window.__GEN_AT__ = j.generatedAt || ''; }
+    }
+  } catch(e){}
+  window.__DATA_V__ = v;
+  var K = 'cSLv!eW#2026hr$View9qZ';
+  function xorDec(b64, k){
+    var bin = atob(b64); var n = bin.length; var u8 = new Uint8Array(n);
+    for (var i=0;i<n;i++){ u8[i] = bin.charCodeAt(i) ^ k.charCodeAt(i % k.length); }
+    try { return new TextDecoder('utf-8').decode(u8); } catch(e){ return ''; }
+  }
+  ['data.js','lizhi_reason.js','zx_lizhi_reason.js','recruit_interview.js','zx_overtime.js'].forEach(function(f){
+    try {
+      var r = new XMLHttpRequest();
+      r.open('GET', f + '.enc?v=' + v, false);
+      r.send();
+      if (r.status === 200) { (0,eval)(xorDec(r.responseText, K)); }
+    } catch(e){}
+  });
+})();
+</script>
+<script>
+var D = window.HR_DATA || null;
+var state = { org:'lanjin', view:'overview' };
+var ORG_NAME = { lanjin:'蓝锦科技', zixian:'紫弦科技' };
+var LJ_PROJECTS = ['梦尔达','水云兔','山下有松','天厉','中创','尤也','欧美斯','梦江','正合','美赞臣','文凡','聚宏','唤起猫娘'];
+var LJ_TEAM = {'梦尔达':'梅江铃团队','水云兔':'梅江铃团队','山下有松':'梅江铃团队','天厉':'梅江铃团队','唤起猫娘':'梅江铃团队','中创':'李建红团队','尤也':'李建红团队','欧美斯':'李建红团队','梦江':'李建红团队','正合':'李建红团队','美赞臣':'李建红团队','文凡':'李建红团队','聚宏':'李建红团队'};
+var ZX_WH = ['华中仓','华南仓','中创仓','尤也仓','服装仓','人资行政部','紫弦仓储中台','运营物控部'];
+
+function esc(s){ return s==null?'—':String(s).replace(/</g,'&lt;'); }
+function fmt1(n){ return n==null?'—':(Math.round(n*10)/10); }
+function pct(a,b){ return b>0 ? Math.round(a/b*1000)/10 : 0; }
+/* 本地日期 YYYY-MM-DD（避免 toISOString 的 UTC 时区偏移，中国时区会错位一天） */
+function ymd(d){ var x=d instanceof Date?d:new Date(d); var y=x.getFullYear(), m=('0'+(x.getMonth()+1)).slice(-2), dd=('0'+x.getDate()).slice(-2); return y+'-'+m+'-'+dd; }
+
+var MGR_POS = ['组长','主管','经理'];
+/* 岗位同类合并：剥离实习/见习/储备/试用/高级/中级/初级/资深等修饰词，归入本岗；
+   紫弦综合一/二/三部归并为综合部；蓝锦零散组长/经理/主管统一为客服组长/客服经理/客服主管。
+   仅用于占比图/柱状图/筛选，明细表仍显示原始职位。 */
+function posMerge(p, org){
+  if(p==null || p==='') return '未填写';
+  var x = String(p).replace(/实习|见习|储备|试用|高级|中级|初级|资深/g,'')
+                   .replace(/综合[一二三四五六七八九十]部/g,'综合部');
+  if(!x) x = String(p);
+  if(org==='lanjin'){
+    if(x==='组长' || x==='电商客服组长') x = '客服组长';
+    if(x==='经理') x = '客服经理';
+    if(x==='主管') x = '客服主管';
+  }
+  return x;
+}
+function posClassLJ(s){
+  /* 蓝锦岗位分类（与后台 custClass 对齐，用于筛选/占比图）：
+     售前/售后/综合/挽单/AI训练师/质检/审核/组长/主管/经理/人资行政/商务BD/其他
+     综合客服 & 混接岗统一按部门树 path 拆分售前/售后：path 含「售前客服组」或「天猫专项组」→售前；含「售后客服组」→售后 */
+  var p = s.position||'', dept = s.dept||'';
+  var pathJoined = ' ' + (s.deptPath||[]).join(' ') + ' ';
+  if(p.indexOf('总经理助理')>=0) return '其他';
+  if(p.indexOf('经理')>=0){
+    if(p.indexOf('人事')>=0 || p.indexOf('行政')>=0 || p.indexOf('HRBP')>=0) return '人资行政';
+    if(p==='总经理') return '其他';
+    return '经理';
+  }
+  if(p.indexOf('主管')>=0) return '主管';
+  if(p.indexOf('组长')>=0) return '组长';
+  if(/HRBP|人事|行政/.test(p) || dept.indexOf('人资行政')>=0) return '人资行政';
+  if(/商务|编导|BD/.test(p) || dept.indexOf('商务')>=0) return '商务BD';
+  if(p.indexOf('挽单')>=0) return '挽单专员';
+  if(p.indexOf('AI训练')>=0) return 'AI训练师';
+  if(p.indexOf('质检')>=0) return '质检';
+  if(p.indexOf('审核')>=0) return '审核';
+  if(p.indexOf('售前')>=0) return '售前客服';
+  if(p.indexOf('售后')>=0) return '售后客服';
+  /* 综合客服 & 混接岗统一按部门路径拆分为售前/售后；不再保留"混接岗"分类 */
+  if(p.indexOf('综合客服')>=0 || p.indexOf('混接')>=0){
+    if(pathJoined.indexOf(' 售前客服组 ')>=0 || pathJoined.indexOf(' 天猫专项组 ')>=0) return '售前客服';
+    if(pathJoined.indexOf(' 售后客服组 ')>=0) return '售后客服';
+    return '综合客服';
+  }
+  if(/项目助理/.test(p)) return '其他';
+  if(MGR_POS.indexOf(s.posLevel)>=0) return s.posLevel;
+  return '其他';
+}
+function posClassZX(s){
+  /* 紫弦岗位分类：严格按钉钉架构的功能板块归类（发运/补货/退件/制单/收货/仓储操作/数据/中台/管理/人资行政/职能） */
+  var p = s.position||'', dept = s.dept||'';
+  if(/HRBP|人事|人资|行政/.test(p) || dept.indexOf('人资行政')>=0) return '人资行政';
+  if(/经理|主管|组长/.test(p)) return '管理岗';
+  if(p.indexOf('发运')>=0) return '发运岗';
+  if(p.indexOf('补货')>=0) return '补货岗';
+  if(p.indexOf('退件')>=0) return '退件岗';
+  if(p.indexOf('制单')>=0) return '制单岗';
+  if(p.indexOf('收货')>=0 || p.indexOf('收录')>=0) return '收货岗';
+  if(/仓储|叉车|装卸/.test(p)) return '仓储操作岗';
+  if(/数据|分析|工程师|物流客服/.test(p)) return '数据岗';
+  if(/中台|调拨|物料|复核/.test(p)) return '中台岗';
+  if(/保洁|运维/.test(p)) return '职能支持';
+  if(p) return '其他';
+  /* 职位为空：按主部门兜底 */
+  if(dept.indexOf('人资行政')>=0) return '人资行政';
+  return '其他';
+}
+function rankNorm(s, org){
+  var r = (s.rank||'').toUpperCase();
+  if(org==='lanjin'){ var m = r.match(/P\s*([1-6])/); return m ? 'P'+m[1] : (r||null); }
+  if(r.indexOf('初')>=0) return '初级';
+  if(r.indexOf('中')>=0) return '中级';
+  if(r.indexOf('高')>=0) return '高级';
+  if(/组长|主管|经理|HRBP/.test(r)) return '高级';
+  return r||null;
+}
+function staffExtMap(org){
+  try{ return JSON.parse(localStorage.getItem('hr_staffext_'+org)||'{}'); }catch(e){ return {}; }
+}
+function staffOf(org){
+  var em = staffExtMap(org);
+  return D[org].staff.map(function(s){
+    var o = Object.assign({}, s);
+    var ext = em[s.name];
+    if(ext){
+      if(ext.age!=null && ext.age!=='' && !isNaN(parseFloat(ext.age))) o.age = Math.round(parseFloat(ext.age));
+      else if(ext.birth){ var by=parseInt(ext.birth.slice(0,4)); if(by>1940) o.age = new Date().getFullYear()-by; }
+      if(ext.gender) o.gender = ext.gender;
+    }
+    o._rank = rankNorm(o, org);
+    o._pos = posMerge(o.position, org);         /* 岗位=花名册「职位」同类合并后 */
+    o._posRaw = o.position || '未填写';          /* 原始职位（明细表用） */
+    o._posClass = org==='lanjin' ? posClassLJ(o) : posClassZX(o);  /* 岗位分类：蓝锦8+1类 / 紫弦职级分类 */
+    o._custClass = org==='lanjin' ? (o.custClass || '其他') : null;  /* 蓝锦客服岗位细分（视图1客服人力看板用） */
+    o._proj = o.project || null;
+    o._team = org==='lanjin' ? (o.team||null) : (o.project||null);
+    return o;
+  });
+}
+function reasonMap(org){
+  try{ return JSON.parse(localStorage.getItem('hr_reason_'+org)||'{}'); }catch(e){ return {}; }
+}
+function leaversOf(org){
+  var rm = reasonMap(org);
+  return D[org].leavers.map(function(l){
+    var o = Object.assign({}, l);
+    var k1 = (l.name||'')+'|'+(l.entryDate||'');
+    var ext = rm[k1] || rm[l.name] || null;
+    if(ext){ o.reason = ext.reason||null; o.rankImp = ext.rank||null; o.posImp = ext.pos||null; o.ageImp = ext.age||null; }
+    o._team = org==='lanjin' ? (l.team||null) : (l.project||null);
+    return o;
+  });
+}
+/* 本期入职（当月全量，含当月入职当月离职）：来自后台预计算 D[org].joiners
+   后台按钉钉花名册(在职)+离职名单 入職日期并集统计，整个自然月，凡是当月入职都计入 */
+function joinersOf(org){
+  return (D[org].joiners||[]).map(function(j){
+    var o = Object.assign({}, j);
+    o._rank = rankNorm(o, org);
+    o._pos = posMerge(o.position, org);
+    o._posRaw = o.position || '未填写';
+    o._posClass = org==='lanjin' ? posClassLJ(o) : posClassZX(o);
+    o._proj = o.project || null;
+    o._team = org==='lanjin' ? (o.team||null) : (o.project||null);
+    return o;
+  });
+}
+/* 时间点截面：把导航栏「时间」下拉转成截面日期；staffAt 返回该周期起点在职人员
+   全部 = 当前在职全量（不截面）；本月/本周/近30天/今日/上月 = 取周期起点作截面点，
+   使「在职人数」= 该周期开始时在岗基数，「入职/离职」= 该周期内流量，全视图口径一致 */
+function cutoffOf(){
+  var v = document.getElementById('f-time').value;
+  if(v==='all') return null;               /* 全部 = 当前在职全量（不截面） */
+  var r = timeRange(); return r ? r[0] : null;  /* 取周期起点作截面 */
+}
+function staffAt(org){
+  var c = cutoffOf();
+  if(!c) return staffOf(org);                  /* 无截面 = 当前在职全量 */
+  var arr = [];
+  staffOf(org).forEach(function(s){ if((s.entryDate||'')<=c) arr.push(s); });                                  /* 当前在职且当时已入职 */
+  leaversOf(org).forEach(function(l){ if((l.entryDate||'')<=c && (l.resignDate||'')>c) arr.push(l); });        /* 当时在职、现已离 */
+  return arr;
+}
+function isMonthView(){ return document.getElementById('f-time').value==='month'; }
+/* 入职名单：当月视图直接用后台全量；其它时间范围按在职+离职入职日期并集兜底 */
+function joinListFor(org, range){
+  var list;
+  if(isMonthView()){ list = joinersOf(org); }
+  else {
+    var m = {};
+    staffOf(org).forEach(function(s){ if(inRange(s.entryDate, range)) m[s.userId||('s_'+s.name)] = s; });
+    leaversOf(org).forEach(function(l){ if(inRange(l.entryDate, range)) m[l.userId||('l_'+l.name)] = l; });
+    list = Object.keys(m).map(function(k){ return m[k]; });
+  }
+  var p=document.getElementById('f-proj').value, r=document.getElementById('f-rank').value,
+      pos=document.getElementById('f-pos').value, nm=document.getElementById('f-name').value.trim();
+  return list.filter(function(s){
+    var pr = s._proj||s.project, rk=s._rank||s.rank, ps=s._posRaw||s.position, tm=s._team||s.team;
+    if(p!=='all' && pr!==p && tm!==p) return false;
+    if(r!=='all' && rk!==r) return false;
+    if(pos!=='all' && ps!==pos && s._posClass!==pos) return false;
+    if(nm && (s.name||'').indexOf(nm)<0) return false;
+    return true;
+  });
+}
+function timeRange(){
+  var now = new Date(); var y=now.getFullYear(), m=now.getMonth(), d=now.getDate();
+  var v = document.getElementById('f-time').value;
+  function ds(x){ return ymd(x); }
+  if(v==='all') return [ds(new Date(y,m,1)), ds(new Date(y,m,d))];   /* 全部 = 本月窗口（当前月在岗+本月入离） */
+  if(v==='day') return [ds(new Date(y,m,d)), ds(new Date(y,m,d))];
+  if(v==='week'){ var dow=(now.getDay()+6)%7; return [ds(new Date(y,m,d-dow)), ds(new Date(y,m,d))]; }
+  if(v==='month') return [ds(new Date(y,m,1)), ds(new Date(y,m,d))];
+  if(v==='d30') return [ds(new Date(y,m,d-29)), ds(new Date(y,m,d))];
+  if(v==='lastm') return [ds(new Date(y,m-1,1)), ds(new Date(y,m,0))];
+  return null;
+}
+function inRange(dateStr, range){
+  if(!range) return true;
+  if(!dateStr) return false;
+  return dateStr>=range[0] && dateStr<=range[1];
+}
+function filterStaff(list){
+  var p=document.getElementById('f-proj').value, r=document.getElementById('f-rank').value,
+      pos=document.getElementById('f-pos').value, nm=document.getElementById('f-name').value.trim();
+  return list.filter(function(s){
+    if(p!=='all' && s._proj!==p && s._team!==p) return false;
+    if(r!=='all' && s._rank!==r) return false;
+    if(pos!=='all' && s._pos!==pos && s._posClass!==pos && s._posRaw!==pos) return false;
+    if(nm && (s.name||'').indexOf(nm)<0) return false;
+    return true;
+  });
+}
+function filterLeavers(list, useTime){
+  var p=document.getElementById('f-proj').value, nm=document.getElementById('f-name').value.trim();
+  var range = useTime ? timeRange() : null;
+  return list.filter(function(l){
+    if(p!=='all' && l.project!==p && l._team!==p) return false;
+    if(nm && (l.name||'').indexOf(nm)<0) return false;
+    if(useTime && !inRange(l.resignDate, range)) return false;
+    return true;
+  });
+}
+
+function buildFilters(){
+  var org = state.org;
+  var projSel = document.getElementById('f-proj'), rankSel = document.getElementById('f-rank'), posSel = document.getElementById('f-pos');
+  var projects = org==='lanjin' ? LJ_PROJECTS : ZX_WH.filter(function(w){
+    return staffOf(org).some(function(s){return s._proj===w;}) || leaversOf(org).some(function(l){return l.project===w;});
+  });
+  document.getElementById('lb-proj').textContent = org==='lanjin' ? '项目' : '仓库';
+  document.getElementById('lb-rank').textContent = org==='lanjin' ? 'P级' : '职级';
+  projSel.innerHTML = '<option value="all">全部</option>' + projects.map(function(p){return '<option>'+p+'</option>';}).join('');
+  var ranks = org==='lanjin' ? ['P1','P2','P3','P4','P5','P6'] : ['初级','中级','高级'];
+  var realRanks = {}; staffOf(org).forEach(function(s){ if(s._rank) realRanks[s._rank]=1; });
+  ranks.forEach(function(r){ realRanks[r]=1; });
+  rankSel.innerHTML = '<option value="all">全部</option>' + Object.keys(realRanks).sort().map(function(r){return '<option>'+r+'</option>';}).join('');
+  var realPos = {}; staffOf(org).forEach(function(s){ if(s._pos) realPos[s._pos]=1; });
+  var posList = Object.keys(realPos).sort();
+  var clsList = org==='lanjin'
+    ? ['售前客服','售后客服','综合客服','挽单专员','AI训练师','质检','审核','组长','主管','经理','人资行政','商务BD','其他']
+    : ['初级专员','中级专员','高级专员','专员（未定级）','组长','主管','经理','人资行政','其他'];
+  posSel.innerHTML = '<option value="all">全部</option>'
+    + '<optgroup label="分类">' + clsList.map(function(p){return '<option>'+p+'</option>';}).join('') + '</optgroup>'
+    + '<optgroup label="具体职位">' + posList.map(function(p){return '<option>'+esc(p)+'</option>';}).join('') + '</optgroup>';
+}
+function resetFilters(){
+  document.getElementById('f-time').value='month';
+  document.getElementById('f-proj').value='all';
+  document.getElementById('f-rank').value='all';
+  document.getElementById('f-pos').value='all';
+  document.getElementById('f-name').value='';
+  render();
+}
+
+/* ===== 下钻：任何数字点击可查看对应人员 ===== */
+var DRILL = {}, drillSeq = 0;
+function reg(list, title){ var id='dr'+(drillSeq++); DRILL[id]={list:list||[], title:title||''}; return id; }
+function showDrill(id){
+  var d = DRILL[id]; if(!d) return;
+  document.getElementById('people-title').textContent = d.title+'（'+d.list.length+'人）';
+  if(d.list.length && d.list[0].noDetail){
+    document.getElementById('people-table').innerHTML = '<div class="empty">'+esc(d.list[0].name)+'</div>';
+    document.getElementById('people-bg').style.display='flex'; return;
+  }
+  var isLv = d.list.length && (d.list[0].onJobDays!==undefined);
+  var isOt = d.list.length && (d.list[0].ot!==undefined);
+  var h;
+  if(!d.list.length){ h='<div class="empty">无人员</div>'; }
+  else if(isLv){
+    h='<table><thead><tr><th>#</th><th>姓名</th><th>'+(state.org==='lanjin'?'项目':'仓库')+'</th><th>部门</th><th>离职原因</th><th>入职日期</th><th>离职日期</th><th>在职(天)</th></tr></thead><tbody>'
+      + d.list.map(function(l,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(l.name)+'</td><td>'+esc(l.project)+'</td><td>'+esc(l.dept)+'</td><td>'+esc(l.reason)+'</td><td>'+esc(l.entryDate)+'</td><td>'+esc(l.resignDate)+'</td><td>'+esc(l.onJobDays)+'</td></tr>'; }).join('')
+      +'</tbody></table>';
+  } else if(isOt){
+    h='<table><thead><tr><th>#</th><th>姓名</th><th>仓库</th><th>加班总时长(h)</th><th>加班转调休(h)</th><th>最终加班(h)</th></tr></thead><tbody>'
+      + d.list.map(function(p,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(p.name)+'</td><td>'+esc(p.project)+'</td><td>'+fmt1(p.ot)+'</td><td>'+fmt1(p.to)+'</td><td>'+fmt1(p.final)+'</td></tr>'; }).join('')
+      +'</tbody></table>';
+  } else {
+    h='<table><thead><tr><th>#</th><th>姓名</th><th>'+(state.org==='lanjin'?'项目':'仓库')+'</th><th>部门</th><th>岗位</th><th>职级</th><th>试用/转正</th><th>性别</th><th>年龄</th><th>司龄(年)</th><th>入职日期</th></tr></thead><tbody>'
+      + d.list.map(function(s,i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s._proj)+'</td><td>'+esc(s.dept)+'</td><td>'+esc(s._posRaw||s._pos||s.position)+'</td><td>'+esc(s._rank||s.rank)+'</td><td>'+esc(s.probationStatus)+'</td><td>'+esc(s.gender)+'</td><td>'+esc(s.age)+'</td><td>'+fmt1(s.tenureYears)+'</td><td>'+esc(s.entryDate)+'</td></tr>'; }).join('')
+      +'</tbody></table>';
+  }
+  document.getElementById('people-table').innerHTML = h;
+  document.getElementById('people-bg').style.display='flex';
+}
+function bars(groups, color, maxItems, titlePrefix){
+  var arr = Object.keys(groups).map(function(k){return [k, groups[k]];}).sort(function(a,b){return b[1].length-a[1].length;});
+  if(maxItems) arr = arr.slice(0, maxItems);
+  var max = arr.length ? arr[0][1].length : 1;
+  return arr.map(function(it){
+    var id = reg(it[1], (titlePrefix||'')+it[0]);
+    return '<div class="bar" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="n" title="'+esc(it[0])+'">'+esc(it[0])+'</div><div class="track"><div class="fill" style="width:'+Math.max(2,it[1].length/max*100)+'%;background:'+(color||'var(--blue)')+'"></div></div><div class="val">'+it[1].length+'人</div></div>';
+  }).join('') || '<div class="empty">无数据</div>';
+}
+function groupBy(list, fn){
+  var m={}; list.forEach(function(x){ var k=fn(x); if(k==null||k==='')k='未填写'; (m[k]=m[k]||[]).push(x); }); return m;
+}
+
+/* ===== 环形占比图（SVG，扇区与图例均可点击下钻） ===== */
+var PIE_COLORS = ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#ec4899','#84cc16','#f97316','#6366f1','#14b8a6','#a855f7'];
+function donut(title, groups, titlePrefix, ordered){
+  var keys = Object.keys(groups).filter(function(k){return groups[k].length;});
+  if(!ordered) keys.sort(function(a,b){return groups[b].length-groups[a].length;});
+  var total = keys.reduce(function(a,k){return a+groups[k].length;},0);
+  if(!total) return '<div class="donut-box"><h4>'+esc(title)+'</h4><div class="empty">无数据</div></div>';
+  var r=44, cx=60, cy=60, C=2*Math.PI*r, off=0;
+  var segs='', legend='';
+  keys.forEach(function(k,i){
+    var n = groups[k].length, frac = n/total, len = frac*C;
+    var color = PIE_COLORS[i%PIE_COLORS.length];
+    var id = reg(groups[k], (titlePrefix||'')+k);
+    segs += '<circle r="'+r+'" cx="'+cx+'" cy="'+cy+'" fill="none" stroke="'+color+'" stroke-width="20" stroke-dasharray="'+Math.max(len-1,0.5)+' '+(C-Math.max(len-1,0.5))+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 '+cx+' '+cy+')" style="cursor:pointer" onclick="showDrill(\''+id+'\')"><title>'+esc(k)+' '+n+'人 ('+Math.round(frac*100)+'%)</title></circle>';
+    legend += '<div class="lg" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><span class="dot" style="background:'+color+'"></span>'+esc(k)+' <b>'+n+'人</b>·'+Math.round(frac*100)+'%</div>';
+    off += len;
+  });
+  return '<div class="donut-box"><h4>'+esc(title)+'</h4><div class="donut-wrap"><svg width="120" height="120" viewBox="0 0 120 120">'+segs
+    +'<text x="60" y="56" text-anchor="middle" font-size="18" font-weight="700" fill="#0f172a">'+total+'</text><text x="60" y="72" text-anchor="middle" font-size="10" fill="#64748b">人</text></svg><div class="donut-legend">'+legend+'</div></div></div>';
+}
+function ageBuckets(list, getter){
+  var ab={'25岁以下':[],'25-30岁':[],'31-35岁':[],'36-40岁':[],'40岁以上':[],'未知':[]};
+  list.forEach(function(x){ var a=getter(x); a=(a==null||a==='')?NaN:parseFloat(a);
+    if(isNaN(a)) ab['未知'].push(x); else if(a<25)ab['25岁以下'].push(x); else if(a<=30)ab['25-30岁'].push(x); else if(a<=35)ab['31-35岁'].push(x); else if(a<=40)ab['36-40岁'].push(x); else ab['40岁以上'].push(x); });
+  Object.keys(ab).forEach(function(k){if(!ab[k].length)delete ab[k];});
+  return ab;
+}
+function tenureBuckets(list){
+  var tb={'3个月内':[],'3-6个月':[],'6-12个月':[],'1-2年':[],'2-3年':[],'3年以上':[],'未知':[]};
+  list.forEach(function(s){ var t=s.tenureYears;
+    if(t==null) tb['未知'].push(s); else if(t<0.25)tb['3个月内'].push(s); else if(t<0.5)tb['3-6个月'].push(s); else if(t<1)tb['6-12个月'].push(s); else if(t<2)tb['1-2年'].push(s); else if(t<3)tb['2-3年'].push(s); else tb['3年以上'].push(s); });
+  Object.keys(tb).forEach(function(k){if(!tb[k].length)delete tb[k];});
+  return tb;
+}
+
+/* ===== 蓝锦客服人力看板专用函数 ===== */
+var CUST_CLASS_ORDER = ['售前客服','售后客服','挽单专员','高级经理','经理','主管','见习主管','组长','储备组长','实习组长','储备经理','AI训练师','质检','审核','助理','BD','人资行政','总经理','编导','其他','未填写'];
+var CUST_CLASS_SHORT = {'售前客服':'售前','售后客服':'售后','挽单专员':'挽单','高级经理':'高经','经理':'经理','主管':'主管','见习主管':'见习主管','组长':'组长','储备组长':'储备组长','实习组长':'实习组长','储备经理':'储备经理','AI训练师':'AI训练','质检':'质检','审核':'审核','助理':'助理','BD':'BD','人资行政':'人资行政','总经理':'总经理','编导':'编导','其他':'其他','未填写':'未填'};
+function custClassGroups(list){
+  var m={}; list.forEach(function(s){ var k=s._custClass||'其他'; (m[k]=m[k]||[]).push(s); }); return m;
+}
+function pDist(list){
+  var m={'P1':[],'P2':[],'P3':[],'P4':[],'P5':[],'P6':[],'未分级':[]};
+  list.forEach(function(s){ var r=s._rank||s.rank; if(m[r]) m[r].push(s); else m['未分级'].push(s); }); return m;
+}
+function p1TenureBuckets(list){
+  var b={'1个月以内':[],'1~3个月':[],'4~6个月':[],'6个月以上':[]};
+  list.forEach(function(s){ var t=s.tenureYears;
+    if(t==null) b['1个月以内'].push(s);
+    else if(t<1/12) b['1个月以内'].push(s);
+    else if(t<3/12) b['1~3个月'].push(s);
+    else if(t<6/12) b['4~6个月'].push(s);
+    else b['6个月以上'].push(s);
+  }); return b;
+}
+function custKpi(t,v,list,title){
+  var id=reg(list, title||t);
+  return '<div class="kpi" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="t">'+t+'</div><div class="v">'+v+'</div><div class="s">'+list.length+'人</div></div>';
+}
+function custBarChart(groups, orderedKeys){
+  /* groups: {P1:[...],P2:[...]} 横向条形图 */
+  var keys = orderedKeys || Object.keys(groups).filter(function(k){return groups[k].length;});
+  var max = keys.length ? Math.max.apply(null, keys.map(function(k){return groups[k].length;})) : 1;
+  var colors = ['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#ec4899'];
+  return keys.map(function(k,i){
+    var n=groups[k].length;
+    var id=reg(groups[k], '客服等级：'+k);
+    return '<div class="bar" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="n" style="width:60px">'+esc(k)+'</div><div class="track"><div class="fill" style="width:'+Math.max(2,n/max*100)+'%;background:'+(colors[i%colors.length])+'"></div></div><div class="val">'+n+'人</div></div>';
+  }).join('');
+}
+function csDash(org, staff){
+  if(org!=='lanjin') return '';
+  var csStaff = staff.filter(function(s){ return s._custClass; });
+  var groups = custClassGroups(csStaff);
+  /* 客服执行岗（P级总人力）= 售前 + 售后；挽单专员为独立职能，单列不计入（用户 2026-07-31：总人力174=售前107+售后67，挽单13另列） */
+  var execClasses = ['售前客服','售后客服'];
+  var execStaff = csStaff.filter(function(s){ return execClasses.indexOf(s._custClass)>=0; });
+  var pLevels = pDist(execStaff);
+  /* 实习/正式 */
+  var prob = execStaff.filter(function(s){return s.probationStatus==='试用';});
+  var formal = execStaff.filter(function(s){return s.probationStatus==='转正';});
+  /* 管理类 */
+  var mgrClasses = ['高级经理','经理','主管','见习主管','组长','储备组长','实习组长','储备经理'];
+  var mgrStaff = csStaff.filter(function(s){ return mgrClasses.indexOf(s._custClass)>=0; });
+  /* 支撑类 */
+  var supClasses = ['AI训练师','质检','审核','助理','BD'];
+  var supStaff = csStaff.filter(function(s){ return supClasses.indexOf(s._custClass)>=0; });
+
+  /* KPI 卡片 */
+  var h = '<div class="cards">'
+    + custKpi('客服合计', execStaff.length+'人', execStaff, '客服P级执行岗（售前+售后）')
+    + custKpi('售前客服', (groups['售前客服']||[]).length+'人', groups['售前客服']||[], '售前客服')
+    + custKpi('售后客服', (groups['售后客服']||[]).length+'人', groups['售后客服']||[], '售后客服')
+    + custKpi('挽单专员', (groups['挽单专员']||[]).length+'人', groups['挽单专员']||[], '挽单专员')
+    + custKpi('客服管理', mgrStaff.length+'人', mgrStaff, '客服管理岗')
+    + custKpi('AI训练师', (groups['AI训练师']||[]).length+'人', groups['AI训练师']||[], 'AI训练师')
+    + custKpi('质检/审核', ((groups['质检']||[]).concat(groups['审核']||[])).length+'人', (groups['质检']||[]).concat(groups['审核']||[]), '质检+审核')
+    + '</div>';
+
+  h += '<div class="grid2">';
+  /* 左侧：客服人力明细表 */
+  h += '<div class="panel"><h3>客服人力明细表（P级 × 实习/正式 · 点击数字下钻）</h3>'
+    + '<div class="twrap"><table><thead><tr><th>岗位分类</th><th>P1实习</th><th>P1正式</th><th>P2实习</th><th>P2正式</th><th>P3实习</th><th>P3正式</th><th>P4实习</th><th>P4正式</th><th>P5实习</th><th>P5正式</th><th>P6实习</th><th>P6正式</th><th>实习</th><th>正式</th><th>合计</th></tr></thead><tbody>';
+  CUST_CLASS_ORDER.forEach(function(cls){
+    var list = groups[cls]; if(!list || !list.length) return;
+    var byP = pDist(list);
+    var rowProb=[], rowFormal=[], rowTotal=[];
+    ['P1','P2','P3','P4','P5','P6'].forEach(function(p){
+      var plist = byP[p]||[];
+      var pc = plist.filter(function(s){return s.probationStatus==='试用';});
+      var fc = plist.filter(function(s){return s.probationStatus==='转正';});
+      rowProb.push(pc); rowFormal.push(fc); rowTotal.push(plist);
+    });
+    var allProb = list.filter(function(s){return s.probationStatus==='试用';});
+    var allFormal = list.filter(function(s){return s.probationStatus==='转正';});
+    function cell(list2, label){ if(!list2.length) return '<td>—</td>'; var id=reg(list2, cls+' · '+label); return '<td style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><b>'+list2.length+'</b></td>'; }
+    h += '<tr><td><b>'+esc(cls)+'</b></td>'
+      + cell(rowProb[0],'P1实习')+cell(rowFormal[0],'P1正式')
+      + cell(rowProb[1],'P2实习')+cell(rowFormal[1],'P2正式')
+      + cell(rowProb[2],'P3实习')+cell(rowFormal[2],'P3正式')
+      + cell(rowProb[3],'P4实习')+cell(rowFormal[3],'P4正式')
+      + cell(rowProb[4],'P5实习')+cell(rowFormal[4],'P5正式')
+      + cell(rowProb[5],'P6实习')+cell(rowFormal[5],'P6正式')
+      + cell(allProb,'实习')+cell(allFormal,'正式')+cell(list,'合计')
+      + '</tr>';
+  });
+  h += '</tbody></table></div></div>';
+
+  /* 右侧：客服等级分布 + P1在职工龄分析 */
+  h += '<div>';
+  h += '<div class="panel"><h3>客服等级分布（P1-P6 · 不含管理/支撑岗）</h3>'
+    + '<div style="margin-bottom:10px;font-size:12px;color:var(--muted)">统计范围：售前+售后执行岗（P级总人力） · 合计 '+execStaff.length+'人</div>'
+    + custBarChart(pLevels, ['P1','P2','P3','P4','P5','P6'])
+    + '<div style="margin-top:12px;padding:10px;background:#f8fafc;border-radius:8px;font-size:12px">'
+    + '<b>占比：</b>' + ['P1','P2','P3','P4','P5','P6'].map(function(p){ var n=(pLevels[p]||[]).length; return p+' '+n+'人 ('+pct(n,execStaff.length)+'%)'; }).join(' · ')
+    + '</div></div>';
+
+  var p1s = pLevels['P1']||[];
+  var p1b = p1TenureBuckets(p1s);
+  var p1Total = p1s.length;
+  h += '<div class="panel"><h3>P1在职工龄分析（入职时长）</h3>'
+    + '<div style="margin-bottom:10px;font-size:12px;color:var(--muted)">当前 P1 人员 '+p1Total+' 人</div>'
+    + '<table><thead><tr><th>入职时长</th><th>1个月以内</th><th>1~3个月</th><th>4~6个月</th><th>6个月以上</th><th>合计</th></tr></thead><tbody><tr>'
+    + '<td>人数</td>'
+    + ['1个月以内','1~3个月','4~6个月','6个月以上'].map(function(k){ var arr=p1b[k]||[]; if(!arr.length) return '<td>—</td>'; var id=reg(arr, 'P1 · '+k); return '<td style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><b>'+arr.length+'</b></td>'; }).join('')
+    + '<td><b>'+p1Total+'</b></td></tr><tr><td>占比</td>'
+    + ['1个月以内','1~3个月','4~6个月','6个月以上'].map(function(k){ var arr=p1b[k]||[]; return '<td>'+pct(arr.length,p1Total)+'%</td>'; }).join('')
+    + '<td>100%</td></tr></tbody></table></div>';
+
+  h += '<div class="panel"><h3>实习 / 正式占比（客服执行岗）</h3>'
+    + '<div class="donut-grid" style="grid-template-columns:1fr 1fr">'
+    + donut('状态占比', {'实习':prob,'正式':formal}, '状态：')
+    + donut('岗位分类占比', groups, '分类：')
+    + '</div></div>';
+
+  h += '</div></div>';
+  return h;
+}
+
+function vOverview(){
+  var org=state.org, all=staffOf(org), staff=filterStaff(all);
+  var range=timeRange(), leav=leaversOf(org);
+  var joinList = filterStaff(joinListFor(org, range));
+  var leaveList = filterStaff(leav.filter(function(l){return inRange(l.resignDate, range);}));
+  var probList = staff.filter(function(s){return s.probationStatus==='试用';});
+  var dsList = staff.filter(function(s){
+    return (s.dept||'').indexOf('电商销售部')>=0
+        || (s.deptPath||[]).some(function(p){ return (''+p).indexOf('电商销售部')>=0; });
+  });
+  var maleList = staff.filter(function(s){return (s.gender||'').indexOf('男')>=0;});
+  var femaleList = staff.filter(function(s){return (s.gender||'').indexOf('女')>=0;});
+  var ageList = staff.filter(function(s){return s.age!=null;});
+  var tenList = staff.filter(function(s){return s.tenureYears!=null;});
+  var avgAge = ageList.length ? ageList.reduce(function(a,b){return a+b.age;},0)/ageList.length : null;
+  var avgTen = tenList.length ? tenList.reduce(function(a,b){return a+b.tenureYears;},0)/tenList.length : null;
+  var h = '<div class="cards">'
+    +kpi('总人数（在职）', staff.length+'人', '当前最新在职全量 '+all.length+'人 · 试用'+staff.filter(function(s){return s.probationStatus==='试用';}).length+'+正式'+staff.filter(function(s){return s.probationStatus==='转正';}).length, staff, ORG_NAME[org]+'在职人员')
+    +kpi('部门数', D[org].stats.deptCount, '组织架构节点')
+    +kpi('本期入职', joinList.length+'人', timeLabel(), joinList, '本期入职（'+timeLabel()+'）')
+    +kpi('本期离职', leaveList.length+'人', timeLabel(), leaveList, '本期离职（'+timeLabel()+'）')
+    +kpi('试用期', probList.length+'人', '占比 '+pct(probList.length,staff.length)+'% · 源：钉钉员工状态=试用 · 数据生成于 '+(D.generatedAt||'?')+' · 前端统计='+all.filter(function(s){return s.probationStatus==='试用';}).length+' · 版本V3', probList, '试用期人员')
+    +kpi('电商销售部人力', dsList.length+'人', '挽单团队 · 源：钉钉职位/部门 · 点击看职位明细', dsList, '电商销售部人力（挽单线）')
+    +kpi('男 / 女', maleList.length+' / '+femaleList.length, '点击查看名单', maleList.concat(femaleList), '性别明细（男'+maleList.length+' / 女'+femaleList.length+'）')
+    +kpi('平均年龄', ageList.length? (fmt1(avgAge)+'岁') : '—', ageList.length? '有年龄数据 '+ageList.length+'人':'待钉钉后台补填员工出生日期', ageList, '有年龄数据人员')
+    +kpi('平均司龄', fmt1(avgTen)+'年', '', tenList, '在职人员（按司龄）')
+    +'</div>';
+  /* 占比分析：环形图 */
+  var ageGrp = ageBuckets(staff, function(s){return s.age;});
+  var hasAge = staff.some(function(s){return s.age!=null;});
+  h += '<div class="panel"><h3>占比分析（点击扇区/图例看名单）</h3>'
+    + (hasAge?'':'<div class="note">※ 年龄占比中「未知」为钉钉API脱敏未返回——需自建应用凭证解锁或导入补充表。</div>')
+    + '<div class="donut-grid">'
+    + donut('性别占比', groupBy(staff,function(s){return s.gender;}), '性别：')
+    + donut('年龄段占比', ageGrp, '年龄：', true)
+    + donut('学历占比', groupBy(staff,function(s){return s.education;}), '学历：')
+    + donut('司龄占比', tenureBuckets(staff), '司龄：', true)
+    + donut('试用/转正占比', groupBy(staff,function(s){return s.probationStatus;}), '状态：')
+    + (org==='lanjin'
+        ? donut('岗位分类（售前/售后/综合/后台/管理/人资行政/商务BD）', groupBy(staff,function(s){return s._posClass;}), '分类：')
+        : donut('岗位分类（发运/补货/退件/制单/收货/仓储操作/数据/中台/管理/人资行政/职能）', groupBy(staff,function(s){return s._posClass;}), '分类：'))
+    + '</div></div>';
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3>部门人数分布（TOP 20 · 点击数字看名单）</h3>'+bars(groupBy(staff,function(s){return s.dept;}),'var(--blue)',20,'部门：')+'</div>';
+  var posTitle = '岗位分布（同类岗位已合并 · 明细表仍显示原始职位）';
+  h += '<div class="panel"><h3>'+posTitle+'</h3>'+bars(groupBy(staff,function(s){return s._pos;}),'var(--purple)',25,'岗位：')+'</div>';
+  h += '<div class="panel"><h3>'+(org==='lanjin'?'项目人数分布':'仓库人数分布')+'</h3>'+bars(groupBy(staff.filter(function(s){return s._proj;}),function(s){return s._proj;}),'var(--green)',20,(org==='lanjin'?'项目：':'仓库：'))+'</div>';
+  h += '<div class="panel"><h3>组织架构（部门树 · 直属 / 含下级人数）</h3>'+treeHtml(org)+'</div>';
+  h += '</div>';
+  return h;
+}
+function kpi(t,v,s,list,title,noDetail){
+  var click='';
+  if(list && list.length){ var id=reg(list, title||t); click=' style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"'; }
+  else if(noDetail){ var id=reg([{name:noDetail, noDetail:true}], title||t); click=' style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看说明"'; }
+  return '<div class="kpi"'+click+'><div class="t">'+t+'</div><div class="v">'+v+'</div><div class="s">'+(s||'')+'</div></div>';
+}
+function timeLabel(){
+  var v=document.getElementById('f-time').value;
+  return {all:'全部时间',day:'今日',week:'本周',month:'本月',d30:'近30天',lastm:'上月'}[v];
+}
+function treeHtml(org){
+  var ds = D[org].depts, byParent={};
+  ds.forEach(function(d){ (byParent[d.parentId]=byParent[d.parentId]||[]).push(d); });
+  var root = ds.find(function(d){return d.parentId===null;});
+  function rec(node, depth){
+    var kids = (byParent[node.deptId]||[]).slice().sort(function(a,b){return b.totalMembers-a.totalMembers;});
+    var hasKids = kids.length>0;
+    var arrow = hasKids ? '<span class="tw">▾</span>' : '<span class="tw leaf">•</span>';
+    var badge = '<span class="cnt"><b>'+node.directMembers+'</b> 直属'
+      + (hasKids ? '<span class="cnt-sep">·</span>含下级 <i>'+node.totalMembers+'</i>' : '')+'</span>';
+    var h = '<div class="tnode">'
+      + '<div class="trow'+(hasKids?' has-kids':'')+'" style="padding-left:'+(depth*20+6)+'px"'
+      + (hasKids?' onclick="treeToggle(this)"':'')+'>'+arrow
+      + '<span class="dn">'+esc(node.deptName)+'</span>'+badge+'</div>';
+    if(hasKids){
+      h += '<div class="tchild">';
+      kids.forEach(function(k){ h += rec(k, depth+1); });
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
+  }
+  if(!root) return '<div class="empty">无架构数据</div>';
+  var head = '<div class="tree-head"><span style="font-size:16px">🏢</span> 组织架构 · 在职合计 <b>'+root.totalMembers+'</b> 人'
+    + '<span class="tree-note">已剔除财务部 / 郑州人员，与看板在职总数一致</span></div>';
+  return head + '<div class="tree">'+rec(root,0)+'</div>';
+}
+function treeToggle(el){
+  var tnode = el.closest('.tnode'); if(!tnode) return;
+  var child = tnode.querySelector(':scope > .tchild');
+  var arrow = tnode.querySelector(':scope > .trow > .tw');
+  if(child){
+    var col = child.classList.toggle('collapsed');
+    if(arrow && !arrow.classList.contains('leaf')) arrow.textContent = col ? '▸' : '▾';
+  }
+}
+
+function vView1(){
+  var org=state.org, staff=filterStaff(staffOf(org));
+  var h = '<div class="panel"><h3>视图1 · 人员明细（归属'+(org==='lanjin'?'项目':'仓库')+' - 岗位 - 姓名 - 司龄 - 职级 - 试用/转正 - 性别 - 年龄 - 学历）共 '+staff.length+' 人</h3><div class="note">※ 年龄/出生日期被钉钉API隐私脱敏无法自动抓取。点右上角「导入年龄/性别补充表」，从钉钉后台导出花名册粘贴即可补全，导入后长期生效。</div><div class="twrap"><table><thead><tr><th>归属'+(org==='lanjin'?'项目':'仓库')+'</th><th>部门</th><th>岗位</th><th>姓名</th><th>司龄(年)</th><th>职级</th><th>试用/转正</th><th>性别</th><th>年龄</th><th>学历</th><th>入职日期</th></tr></thead><tbody>';
+  staff.sort(function(a,b){ return (a._proj||'zz').localeCompare(b._proj||'zz','zh') || (b.tenureYears||0)-(a.tenureYears||0); });
+  staff.forEach(function(s){
+    var pb = s.probationStatus==='试用' ? '<span class="tag tg-amber">试用</span>' : (s.probationStatus==='转正'?'<span class="tag tg-green">转正</span>':'<span class="tag tg-gray">未知</span>');
+    h += '<tr><td>'+esc(s._proj)+'</td><td>'+esc(s.dept)+'</td><td>'+esc(s._posRaw)+'</td><td>'+esc(s.name)+'</td><td>'+fmt1(s.tenureYears)+'</td><td>'+esc(s._rank)+'</td><td>'+pb+'</td><td>'+esc(s.gender)+'</td><td>'+esc(s.age)+'</td><td>'+esc(s.education)+'</td><td>'+esc(s.entryDate)+'</td></tr>';
+  });
+  h += '</tbody></table></div></div>';
+  h += '<div class="panel"><h3>人力情况分析 · 异常项目复盘 · 建议</h3>'+analysisView1(org, staff)+'</div>';
+  return h;
+}
+function analysisView1(org, staff){
+  var all = filterStaff(staffOf(org)), leav = filterStaff(leaversOf(org));
+  var h = '';
+  var prob = staff.filter(function(s){return s.probationStatus==='试用';});
+  var noEdu = staff.filter(function(s){return !s.education;}).length;
+  var shortTen = staff.filter(function(s){return s.tenureYears!=null && s.tenureYears<0.25;}).length;
+  h += '<div class="insight"><b>整体盘面：</b>当前筛选范围在职 '+staff.length+' 人；试用期 '+prob.length+' 人（'+pct(prob.length,staff.length)+'%）；司龄不足3个月的新人 '+shortTen+' 人（'+pct(shortTen,staff.length)+'%）。'
+    + (noEdu>0 ? ' 学历字段缺失 '+noEdu+' 人，建议在钉钉花名册补录后数据自动修正。':'')+'</div>';
+  var groups = org==='lanjin' ? LJ_PROJECTS : ZX_WH;
+  var d90 = new Date(); d90.setDate(d90.getDate()-90); var d90s = ymd(d90);
+  var abn = [];
+  groups.forEach(function(g){
+    var on = all.filter(function(s){return s._proj===g;});
+    var lv90 = leav.filter(function(l){return l.project===g && l.resignDate && l.resignDate>=d90s;});
+    if(on.length===0 && lv90.length===0) return;
+    var rate = pct(lv90.length, on.length+lv90.length);
+    var probR = pct(on.filter(function(s){return s.probationStatus==='试用';}).length, on.length);
+    var flash = lv90.filter(function(l){return l.onJobDays!=null && l.onJobDays<=30;}).length;
+    var reasons = [];
+    if(rate>=25) reasons.push('近90天流失率 '+rate+'%（离职'+lv90.length+'人 vs 在职'+on.length+'人），明显偏高');
+    if(on.length>0 && probR>=40) reasons.push('试用期占比 '+probR+'%，团队稳定性弱、带教压力大');
+    if(flash>=3) reasons.push('近90天入职≤30天闪离 '+flash+' 人，招聘匹配或入职体验有问题');
+    if(reasons.length) abn.push({g:g, on:on.length, reasons:reasons, rate:rate});
+  });
+  if(abn.length){
+    abn.sort(function(a,b){return b.rate-a.rate;});
+    abn.forEach(function(a){
+      h += '<div class="insight warn"><b>⚠ 异常'+(org==='lanjin'?'项目':'仓库')+'：'+a.g+'</b>（在职'+a.on+'人）<br>'+a.reasons.map(function(r){return '· '+r;}).join('<br>')+'</div>';
+    });
+    h += '<div class="insight tip"><b>解决方案与建议：</b><br>'
+      +'· 流失率偏高的'+(org==='lanjin'?'项目':'仓库')+'：一周内逐一做在职访谈（优先司龄3-12个月的骨干），锁定薪酬、排班、管理三类主因；<br>'
+      +'· 闪离集中的团队：复盘招聘话术与岗位真实情况的差距，入职首周安排双导师带教，第3/7/15天固定回访；<br>'
+      +'· 试用期占比过高的团队：放缓补员节奏，先抓转正率（设定转正率≥80%目标），避免"边招边流"；<br>'
+      +'· 建议对异常团队建立周度人力监控（本看板每日9:00自动更新，可直接跟踪）。</div>';
+  } else {
+    h += '<div class="insight good"><b>✓ 未发现异常项目。</b>各团队近90天流失率、试用占比、闪离人数均在合理区间。建议保持当前管理节奏，关注司龄1年以上骨干的保留。</div>';
+  }
+  return h;
+}
+
+function vView2(){
+  return state.org==='zixian' ? vView2Zx() : vView2LJ();
+}
+function vView2Zx(){
+  var org=state.org, all=filterStaff(staffOf(org)), leav=filterStaff(leaversOf(org)), range=timeRange();
+  var winJoin = filterStaff(joinListFor(org, range)), winLeave = filterStaff(filterLeavers(leaversOf(org), true));  // 周期内入/离，与总览同源
+  var teams = ZX_WH.filter(function(w){ return all.some(function(s){return s._proj===w;}) || leav.some(function(l){return l.project===w;}); });
+  var h = '<div class="panel"><h3>视图2 · 各仓维度：人员入/离数据（'+timeLabel()+'）</h3><div class="note">紫弦按仓库维度诊断　※ 按你的确认，只统计入/离，不含转/调。</div><div class="secgrid">';
+  teams.forEach(function(t){
+    var on = all.filter(function(s){return s._proj===t;});
+    var lvAll = leav.filter(function(l){return l.project===t;});
+    var joinList = winJoin.filter(function(j){return j._proj===t;});
+    var lvList = winLeave.filter(function(l){return l.project===t;});
+    var joins = joinList.length, lvs = lvList.length;
+    var idOn = reg(on, t+' · 在职'), idJoin = reg(joinList, t+' · 本期入职'), idLv = reg(lvList, t+' · 本期离职');
+    var d90 = new Date(); d90.setDate(d90.getDate()-90); var d90s=ymd(d90);
+    var lv90 = lvAll.filter(function(l){return l.resignDate && l.resignDate>=d90s;});
+    var rate90 = pct(lv90.length, on.length+lv90.length);
+    var probR = pct(on.filter(function(s){return s.probationStatus==='试用';}).length, on.length);
+    var tens = on.map(function(s){return s.tenureYears;}).filter(function(x){return x!=null;});
+    var avgTen = tens.length? tens.reduce(function(a,b){return a+b;},0)/tens.length : 0;
+    var flash90 = lv90.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;}).length;
+    var score = 100;
+    score -= Math.min(40, rate90*1.2);
+    score -= Math.min(20, probR*0.4);
+    score -= Math.min(20, flash90*4);
+    score += Math.min(10, avgTen*5);
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    var grade = score>=80?['A · 健康','var(--green)']:score>=65?['B · 良好','var(--blue)']:score>=50?['C · 预警','var(--amber)']:['D · 高危','var(--red)'];
+    var advice = [];
+    if(rate90>=25) advice.push('近90天流失率'+rate90+'%偏高，负责人需牵头做离职归因与在职保留访谈');
+    if(probR>=40) advice.push('试用占比'+probR+'%，团队偏"新"，控制招聘节奏、抓转正率');
+    if(flash90>=3) advice.push('闪离'+flash90+'人，检查招聘承诺与岗位实际的落差');
+    if(avgTen<0.5 && on.length>=10) advice.push('平均司龄不足半年，骨干沉淀不足，建议设立老带新激励');
+    if(!advice.length) advice.push('指标健康，保持现有节奏，关注骨干保留与梯队建设');
+    h += '<div class="teamcard"><div class="hd"><div class="nm">'+esc(t)+'</div><div class="hbadge" style="color:'+grade[1]+'">'+score+'<span style="font-size:12px;font-weight:400;color:var(--muted)"> /100</span></div></div>'
+      +'<div style="margin-bottom:8px"><span class="tag" style="background:'+grade[1]+'20;color:'+grade[1]+'">'+grade[0]+'</span></div>'
+      +'<div class="mini">'
+      +'<div style="cursor:pointer" onclick="showDrill(\''+idOn+'\')" title="点击查看名单"><div class="mv">'+on.length+'</div><div class="mt">在职</div></div>'
+      +'<div style="cursor:pointer" onclick="showDrill(\''+idJoin+'\')" title="点击查看名单"><div class="mv" style="color:var(--green)">+'+joins+'</div><div class="mt">本期入职</div></div>'
+      +'<div style="cursor:pointer" onclick="showDrill(\''+idLv+'\')" title="点击查看名单"><div class="mv" style="color:var(--red)">-'+lvs+'</div><div class="mt">本期离职</div></div>'
+      +'<div><div class="mv">'+rate90+'%</div><div class="mt">近90天流失率</div></div>'
+      +'<div><div class="mv">'+probR+'%</div><div class="mt">试用占比</div></div>'
+      +'<div><div class="mv">'+fmt1(avgTen)+'</div><div class="mt">平均司龄(年)</div></div>'
+      +'</div><div class="insight" style="margin:0">'+advice.map(function(a){return '· '+a;}).join('<br>')+'</div></div>';
+  });
+  h += '</div></div>';
+  return h;
+}
+function vView2LJ(){
+  var org='lanjin', all=filterStaff(staffOf(org)), range=timeRange();
+  function tk(x){ return x._team || '__fn__'; }
+  /* 顶部 = 整体口径（与总览 / 招聘视图一致）：当前在职全量 + 周期内入职 + 周期内离职 */
+  var onAll = all;
+  var winJoin = filterStaff(joinListFor(org, range));              // 周期内入职（含入职即离），与总览同源
+  var winLeave = filterStaff(filterLeavers(leaversOf(org), true)); // 周期内离职，与总览同源
+  var joinAll = winJoin, lvAll = winLeave;
+  var teamDefs = [
+    {key:'梅江铃团队', label:'梅江铃团队', color:'var(--purple)'},
+    {key:'李建红团队', label:'李建红团队', color:'var(--blue)'},
+    {key:'__fn__', label:'职能部门（人资/客服/审核/商务BD/数据等）', color:'var(--muted)'}
+  ];
+  var h = '<div class="panel"><h3>视图2 · 负责人维度：梅江铃 / 李建红 团队 + 职能部门 人员架构</h3>'
+    + '<div class="note">数据来源：钉钉后台-通讯录（花名册，按个人主部门全路径归属项目）+ 离职名单（按项目部门递归抓取）。<b>在职 = 当前最新在职全量</b>（不随时间窗口截断）；入职/离职 = 该周期内全量（含「入职即离」）。下方三分组（两团队 + 职能）合计 = 整体，点数字或柱状条可下钻查看姓名与人员架构。</div>';
+  h += '<div class="cards">'
+    + kpi('蓝锦在职总数', onAll.length+'人', '当前最新在职全量', onAll, '蓝锦当前在职人员')
+    + kpi(timeLabel()+'入职', '+'+joinAll.length+'人', '含入职即离', joinAll, '蓝锦'+timeLabel()+'入职名单')
+    + kpi(timeLabel()+'离职', '-'+lvAll.length+'人', '钉钉后台全量', lvAll, '蓝锦'+timeLabel()+'离职名单')
+    + kpi('分组', teamDefs.length+' 个', '梅江铃 / 李建红 / 职能', null, '')
+    + '</div>';
+  teamDefs.forEach(function(td){
+    var on = all.filter(function(s){return tk(s)===td.key;});
+    var joinList = winJoin.filter(function(j){return tk(j)===td.key;});
+    var lvList = winLeave.filter(function(l){return tk(l)===td.key;});
+    var idOn = reg(on, td.label+' · 在职'), idJoin = reg(joinList, td.label+' · 本月入职'), idLv = reg(lvList, td.label+' · 本月离职');
+    /* 当月离职率 = 当月离职 / (期末在职 + 当月离职) */
+    var rateMonth = pct(lvList.length, on.length + lvList.length);
+    var probList = on.filter(function(s){return s.probationStatus==='试用';});
+    var idProb = reg(probList, td.label+' · 试用期人员');
+    var probR = pct(probList.length, on.length);
+    var tens = on.map(function(s){return s.tenureYears;}).filter(function(x){return x!=null;});
+    var avgTen = tens.length? tens.reduce(function(a,b){return a+b;},0)/tens.length : 0;
+    var flashMonth = lvList.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;}).length;
+    var score = 100 - Math.min(40, rateMonth*1.2) - Math.min(20, probR*0.4) - Math.min(20, flashMonth*4) + Math.min(10, avgTen*5);
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    var grade = score>=80?['A · 健康','var(--green)']:score>=65?['B · 良好','var(--blue)']:score>=50?['C · 预警','var(--amber)']:['D · 高危','var(--red)'];
+    var advice = [];
+    if(rateMonth>=25) advice.push(timeLabel()+'离职率'+rateMonth+'%偏高，负责人需牵头做离职归因与在职保留访谈');
+    if(probR>=40) advice.push('试用占比'+probR+'%，团队偏"新"，控制招聘节奏、抓转正率');
+    if(flashMonth>=3) advice.push('闪离'+flashMonth+'人，检查招聘承诺与岗位实际的落差');
+    if(avgTen<0.5 && on.length>=10) advice.push('平均司龄不足半年，骨干沉淀不足，建议设立老带新激励');
+    if(!advice.length) advice.push('指标健康，保持现有节奏，关注骨干保留与梯队建设');
+    /* 分组：团队按项目；职能支持按部门 */
+    var groups = {};
+    if(td.key==='__fn__'){
+      on.forEach(function(s){ var p=s.dept||'未命名部门'; (groups[p]=groups[p]||[]).push(s); });
+    } else {
+      on.forEach(function(s){ var p=s._proj||'未归属项目'; (groups[p]=groups[p]||[]).push(s); });
+    }
+    var sk=Object.keys(groups).sort(function(a,b){return groups[b].length-groups[a].length;});
+    var sg={}; sk.forEach(function(k){ sg[k]=groups[k]; });
+    var grpTitle = td.key==='__fn__' ? '各部门人数' : '各项目 / 小组人数';
+    h += '<div class="teamcard" style="border-left:4px solid '+td.color+'">'
+      + '<div class="hd"><div class="nm">'+esc(td.label)+'</div><div class="hbadge" style="color:'+grade[1]+'">'+score+'<span style="font-size:12px;font-weight:400;color:var(--muted)"> /100</span></div></div>'
+      + '<div style="margin-bottom:8px"><span class="tag" style="background:'+grade[1]+'20;color:'+grade[1]+'">'+grade[0]+'</span></div>'
+      + '<div class="mini">'
+      + '<div style="cursor:pointer" onclick="showDrill(\''+idOn+'\')" title="点击查看名单"><div class="mv">'+on.length+'</div><div class="mt">在职</div></div>'
+      + '<div style="cursor:pointer" onclick="showDrill(\''+idJoin+'\')" title="点击查看名单"><div class="mv" style="color:var(--green)">+'+joinList.length+'</div><div class="mt">'+timeLabel()+'入职</div></div>'
+      + '<div style="cursor:pointer" onclick="showDrill(\''+idLv+'\')" title="点击查看名单"><div class="mv" style="color:var(--red)">-'+lvList.length+'</div><div class="mt">'+timeLabel()+'离职</div></div>'
+      + '<div><div class="mv">'+rateMonth+'%</div><div class="mt">当月离职率</div></div>'
+      + '<div style="cursor:pointer" onclick="showDrill(\''+idProb+'\')" title="点击查看试用期名单"><div class="mv" style="color:var(--amber)">'+probList.length+'</div><div class="mt">试用期人员</div></div>'
+      + '<div><div class="mv">'+probR+'%</div><div class="mt">试用占比</div></div>'
+      + '<div><div class="mv">'+fmt1(avgTen)+'</div><div class="mt">平均司龄(年)</div></div>'
+      + '</div>'
+      + '<div class="insight" style="margin:6px 0 2px">'+advice.map(function(a){return '· '+a;}).join('<br>')+'</div>'
+      + '<div class="panel" style="margin:8px 0 0"><h3 style="font-size:13px">'+grpTitle+'（'+on.length+' 人在职 · 点柱状条下钻姓名）</h3>'+bars(sg, td.color, null, td.label+' · ')+'</div>'
+      + '</div>';
+  });
+  h += '</div>';
+  return h;
+}
+
+function vRecruit(){
+  var org=state.org, all=staffAt(org), leav=leaversOf(org), range=timeRange();
+  var joins = joinListFor(org, range);
+  var lvs = filterLeavers(leav, true);
+  var hasReason = lvs.some(function(l){return l.reason;});
+  var flashList = lvs.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;});
+  var h = '<div class="cards">'
+    +kpi('本期入职', joins.length+'人', timeLabel(), joins, '本期入职（'+timeLabel()+'）')
+    +kpi('本期离职', lvs.length+'人', timeLabel(), lvs, '本期离职（'+timeLabel()+'）')
+    +kpi('净增', (joins.length-lvs.length>=0?'+':'')+(joins.length-lvs.length)+'人','入职-离职')
+    +kpi('离职≤30天', flashList.length+'人','闪离', flashList, '入职30天内闪离')
+    +kpi('平均在职', fmt1(avg(lvs.map(function(l){return l.onJobDays;})))+'天','离职人员', lvs, '本期离职人员')
+    +'</div>';
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3>当月入职明细（'+timeLabel()+' · '+joins.length+'人 · 含当月入职当月离职）</h3><div class="twrap"><table><thead><tr><th>姓名</th><th>状态</th><th>级别</th><th>岗位</th><th>'+(org==='lanjin'?'项目':'仓库')+'</th><th>入职日期</th><th>在职时间(天)</th><th>试用/转正</th></tr></thead><tbody>'
+    + (joins.length ? joins.sort(function(a,b){return (b.entryDate||'').localeCompare(a.entryDate||'');}).map(function(s){
+        var days = s.entryDate ? Math.round((new Date()-new Date(s.entryDate))/86400000) : null;
+        var st = s.status==='已离' ? '<span class="tag tg-gray">已离</span>' : '<span class="tag tg-green">在职</span>';
+        return '<tr><td>'+esc(s.name)+'</td><td>'+st+'</td><td>'+esc(s._rank)+'</td><td>'+esc(s._posRaw)+'</td><td>'+esc(s._proj)+'</td><td>'+esc(s.entryDate)+'</td><td>'+esc(days)+'</td><td>'+esc(s.probationStatus)+'</td></tr>';
+      }).join('') : '<tr><td colspan="8" class="empty">本期无入职</td></tr>')
+    +'</tbody></table></div></div>';
+  h += '<div class="panel"><h3>当月离职明细（'+timeLabel()+' · '+lvs.length+'人）</h3>'
+    + (hasReason?'':'<div class="note">※ 离职原因/级别/岗位需导入钉钉后台离职表（右上角"导入离职原因表"），导入后自动合并显示。</div>')
+    +'<div class="twrap"><table><thead><tr><th>姓名</th><th>离职原因</th><th>级别</th><th>岗位</th><th>部门</th><th>入职日期</th><th>离职日期</th><th>在职时间(天)</th></tr></thead><tbody>'
+    + (lvs.length ? lvs.sort(function(a,b){return (b.resignDate||'').localeCompare(a.resignDate||'');}).map(function(l){
+        return '<tr><td>'+esc(l.name)+'</td><td>'+(l.reason?'<span class="tag tg-red">'+esc(l.reason)+'</span>':'—')+'</td><td>'+esc(l.rankImp)+'</td><td>'+esc(l.posImp)+'</td><td>'+esc(l.dept)+'</td><td>'+esc(l.entryDate)+'</td><td>'+esc(l.resignDate)+'</td><td>'+esc(l.onJobDays)+'</td></tr>';
+      }).join('') : '<tr><td colspan="8" class="empty">本期无离职</td></tr>')
+    +'</tbody></table></div></div>';
+  h += '</div>';
+  h += '<div class="panel"><h3>离职深度复盘（'+timeLabel()+'）</h3>'+leaveAnalysis(org, lvs, hasReason)+'</div>';
+  h += reasonLizhiSection();
+  return h;
+}
+function vRecruit2(){
+  var R = window.RECRUIT_INTERVIEW;
+  if(!R || !R[state.org]){
+    return '<div class="panel"><div class="empty">未生成招聘邀约到面数据（recruit_interview.js）。请先运行 scripts/fetch_interview.py 生成。</div></div>';
+  }
+  if(!D || !D[state.org] || !D[state.org].joiners){
+    return '<div class="panel"><div class="empty">未找到花名册数据（data.js），无法统计入职/留存。</div></div>';
+  }
+  var data = R[state.org];
+  var dimLabel = state.org==='lanjin' ? '邀约人' : '仓库';
+  var org = state.org;
+  /* 入职/留存：实时取自钉钉后台花名册（与总数据看板·本期入职同源） */
+  var allJoiners = joinListFor(org, timeRange());      // 与总数据看板·本期入职 同源（本月=后台全量，其它时间=按入职日期截面），自动响应「时间」筛选
+  var joins = filterStaff(allJoiners);                 // 与总数据看板·本期入职 同一筛选
+  var retainedJoins = joins.filter(function(j){ return j.status!=='已离'; });
+  /* 维度归属：蓝锦按 姓名→邀约人 映射；紫弦按 主部门(仓库) 别名 */
+  var nameInv = data.nameInviter || {};
+  var whAlias = {'华中仓':'华中','华南仓':'华南','中创仓':'中创','尤也仓':'尤也','服装仓':'服装','光山仓':'服装'};
+  function dimOf(j){
+    if(org==='lanjin'){ return nameInv[j.name] || '其他邀约人'; }
+    var wh = j._proj || j.project || '';
+    return whAlias[wh] || wh || '其他';
+  }
+  var byDim = {};   // dim -> {onb:[], ret:[]}
+  function bucket(dk, j){ (byDim[dk]=byDim[dk]||{onb:[],ret:[]}); byDim[dk].onb.push(j); if(j.status!=='已离') byDim[dk].ret.push(j); }
+  joins.forEach(function(j){ bucket(dimOf(j), j); });
+  /* 文档侧 到面/复试通过（候选姓名用于下钻） */
+  function wrapNames(arr){ return (arr||[]).map(function(n){ return {name:n}; }); }
+  var nmF = (document.getElementById('f-name').value||'').trim();
+  function filtNames(arr){ return nmF ? arr.filter(function(n){ return (n||'').indexOf(nmF)>=0; }) : arr; }
+  var allInt = [], allPass = [];
+  (data.rows||[]).forEach(function(r){ allInt = allInt.concat(filtNames(r.interviewedNames||[])); allPass = allPass.concat(filtNames(r.passedNames||[])); });
+  /* 整体口径 */
+  var ovInt = data.overall.interviewed, ovPass = data.overall.passed;
+  var ovOnb = joins.length, ovRet = retainedJoins.length;
+  var noDetailMsg = org==='zixian' ? '紫弦招聘文档仅按仓库汇总到面/通过人数，未维护候选人名单，无法显示具体姓名。' : '';
+  var h = '';
+  var docLabel = data.docMonth === data.month ? data.month+' 当月' : data.docMonth+' 月（钉钉文档）';
+  /* KPI（均可下钻看人） */
+  h += '<div class="cards">'
+    + kpi('到面人数', ovInt+' 人', docLabel, wrapNames(filtNames(allInt)), '到面候选人名单', noDetailMsg)
+    + kpi('复试通过', ovPass+' 人', '通过率 '+fmt1(pct(ovPass,ovInt))+'% · '+docLabel, wrapNames(filtNames(allPass)), '复试通过候选人名单', noDetailMsg)
+    + kpi('面试通过率', fmt1(pct(ovPass,ovInt))+'%', '复试通过 / 到面')
+    + kpi('最终入职', ovOnb+' 人', '入职率 '+fmt1(pct(ovOnb,ovPass))+'% · 与总数据看板一致', joins, '最终入职人员（本期入职）')
+    + kpi('入职率', fmt1(pct(ovOnb,ovPass))+'%', '最终入职 / 复试通过')
+    + kpi('当月留存', ovRet+' 人', '截至目前仍在职', retainedJoins, '留存人员（目前在岗）')
+    + '</div>';
+  /* 来源说明 */
+  h += '<div class="note">数据来源：'+esc(data.source)+'　|　文档月份：'+esc(data.docMonth)
+    + (data.docMonth!==data.month ? '（看板统计月 '+data.month+'）' : '')
+    + '<br>'+esc(data.note)+'<br>※ 上方时间/项目/岗位/姓名筛选对「最终入职/留存」实时联动（与总数据看板·本期入职同源）；点击任意数字可查看对应人员。到面 / 复试通过取自钉钉文档（仅本月有数据）。</div>';
+  /* 明细表：各维度 */
+  var rows = (data.rows||[]).map(function(r){
+    var b = byDim[r.dim] || {onb:[],ret:[]};
+    return { dim:r.dim, position:r.position, interviewed:r.interviewed, passed:r.passed,
+      onboarded:b.onb.length, retained:b.ret.length,
+      intNames:filtNames(r.interviewedNames||[]), passNames:filtNames(r.passedNames||[]),
+      onb:b.onb, ret:b.ret };
+  });
+  if(byDim['其他邀约人']){ var o=byDim['其他邀约人']; rows.push({dim:'其他邀约人',position:'其他',interviewed:0,passed:0,onboarded:o.onb.length,retained:o.ret.length,intNames:[],passNames:[],onb:o.onb,ret:o.ret}); }
+  rows.sort(function(a,b){ return (b.interviewed-a.interviewed) || (b.onboarded-a.onboarded); });
+  h += '<div class="panel"><h3>'+esc(dimLabel)+'维度 · 招聘邀约到面明细（'+data.month+'）</h3><div class="twrap"><table><thead><tr>'
+    + '<th>'+esc(dimLabel)+'</th><th>岗位类别</th><th>到面</th><th>复试通过</th><th>通过率</th><th>最终入职</th><th>入职率</th><th>留存</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    h += '<tr><td>'+esc(r.dim)+'</td><td>'+esc(r.position)+'</td>'
+      + '<td'+drillAttr(wrapNames(r.intNames), r.dim+' · 到面名单', noDetailMsg)+'>'+r.interviewed+'</td>'
+      + '<td'+drillAttr(wrapNames(r.passNames), r.dim+' · 复试通过名单', noDetailMsg)+'>'+r.passed+'</td>'
+      + '<td>'+fmt1(pct(r.passed,r.interviewed))+'%</td>'
+      + '<td'+drillAttr(r.onb, r.dim+' · 最终入职名单')+'>'+r.onboarded+'</td>'
+      + '<td>'+fmt1(pct(r.onboarded,r.passed))+'%</td>'
+      + '<td'+drillAttr(r.ret, r.dim+' · 留存名单')+'>'+r.retained+'</td></tr>';
+  });
+  h += '<tr class="sum"><td>合计</td><td>—</td>'
+    + '<td>'+ovInt+'</td><td>'+ovPass+'</td><td>'+fmt1(pct(ovPass,ovInt))+'%</td>'
+    + '<td'+drillAttr(joins, '合计 · 最终入职名单')+'>'+ovOnb+'</td>'
+    + '<td>'+fmt1(pct(ovOnb,ovPass))+'%</td>'
+    + '<td'+drillAttr(retainedJoins, '合计 · 留存名单')+'>'+ovRet+'</td></tr>';
+  h += '</tbody></table></div></div>';
+  return h;
+}
+function renderZxLizhi(R){
+  var k = R.kpi;
+  function kbox(t,v,s){ return '<div class="kpi"><div class="t">'+t+'</div><div class="v">'+v+'</div><div class="s">'+s+'</div></div>'; }
+  function zxTag(t){ return t==='劝退'?'tg-red':(t==='自离'?'tg-gray':'tg-amber'); }
+  var h = '<div class="panel" style="border-left:4px solid var(--blue)">'
+    + '<h3 style="color:var(--blue)">紫弦科技 · 离职面谈专项分析（'+esc(R.scope)+' · 来源：'+esc(R.source)+'）</h3>';
+  h += '<div class="cards">'
+    + kpi('当月离职面谈', k.total+' 人', esc(R.scope)+' · 面谈记录', lizhiList(R.details,'zixian'), '当月离职面谈全名单')
+    + kpi('主动离职', k.active+' 人', k.activePct+'%（员工提出）', lizhiList(R.details,'zixian',function(d){return d.type!=='劝退';}), '主动离职面谈(含自离)')
+    + kpi('劝退', k.quit+' 人', k.quitPct+'%（考核/规范）', lizhiList(R.details,'zixian',function(d){return d.type==='劝退';}), '劝退面谈')
+    + kpi('自离', k.zili+' 人', '未走流程离职', lizhiList(R.details,'zixian',function(d){return d.type==='自离';}), '自离面谈')
+    + '</div>';
+  /* 原因排名 + 占比：图形化 */
+  var reasonGroups = {};
+  R.reasons.forEach(function(r){ reasonGroups[r.name] = lizhiList(R.details,'zixian',function(d){return d.cat===r.name;}); });
+  var whGroups = detailGroups(R.details, function(d){return d.body;}, 'zixian');
+  var posGroups = detailGroups(R.details, function(d){return d.position;}, 'zixian');
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3 style="font-size:13px">离职原因排名（TOP）</h3>'+barsReasonZx(reasonGroups, R.reasons, '原因分类·')+'</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">离职原因占比</h3>'+donut(' ', reasonGroups, '离职原因：', true)+'</div>';
+  h += '</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">原因解读</h3><div style="font-size:12px;line-height:1.8;color:var(--muted)">'
+    + R.reasons.map(function(r){ return '<div style="margin-bottom:5px"><b>'+esc(r.name)+'</b> · <span class="tag '+zxTag(r.type)+'">'+esc(r.type)+'</span> · '+esc(r.desc)+'</div>'; }).join('')
+    + '</div></div>';
+  /* 按仓库 + 按职位：图形化 */
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3 style="font-size:13px">按仓库（主体）分布</h3>'+bars(whGroups,'var(--blue)',null,'仓库·')+'</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">按职位分布</h3>'+bars(posGroups,'var(--purple)',null,'职位·')+'</div>';
+  h += '</div>';
+  /* 关键发现 */
+  h += '<div class="insight"><b>关键发现：</b><br>'+R.findings.map(function(f){return '· '+esc(f);}).join('<br>')+'</div>';
+  /* 解决方案 */
+  R.solutions.forEach(function(s){
+    h += '<div class="insight tip"><b>【'+s.tag+'】'+esc(s.title)+'</b><ul style="margin:6px 0 0 18px;line-height:1.9">'
+      + s.items.map(function(it){return '<li>'+esc(it)+'</li>';}).join('')+'</ul></div>';
+  });
+  /* 明细清单 */
+  h += '<h3 style="font-size:13px;margin-top:6px">离职面谈明细清单（'+esc(R.scope)+' · '+k.total+'人）</h3>'
+    + '<div class="twrap"><table><thead><tr><th>#</th><th>姓名</th><th>仓库</th><th>部门</th><th>职位</th><th>直属主管</th><th>面谈日期</th><th>入职</th><th>最后工作日</th><th>类别</th><th>离职原因/详情</th></tr></thead><tbody>'
+    + R.details.map(function(d){
+        return '<tr><td>'+d.seq+'</td><td>'+esc(d.name)+'</td><td>'+esc(d.body)+'</td><td>'+esc(d.dept)+'</td><td>'+esc(d.position)+'</td><td>'+esc(d.manager)+'</td><td>'+esc(d.date)+'</td><td>'+esc(d.entry)+'</td><td>'+esc(d.last)+'</td><td><span class="tag '+zxTag(d.type)+'">'+esc(d.cat)+'</span></td><td style="white-space:normal;max-width:300px">'+esc(d.reason)+'</td></tr>';
+      }).join('')
+    + '</tbody></table></div>';
+  h += '</div>';
+  return h;
+}
+function toLizhiRow(d, org){
+  if(org==='zixian'){
+    return {name:d.name, project:d.body||'', dept:d.dept||'', reason:d.cat||'', entryDate:d.entry||'', resignDate:d.last||'', onJobDays:''};
+  }
+  return {name:d.name, project:d.dept||'', dept:d.dept||'', reason:d.reason||'', entryDate:d.entry||'', resignDate:d.leave||'', onJobDays:(d.dur==null?'':d.dur)};
+}
+function lizhiList(details, org, fn){
+  return (details||[]).filter(fn||function(){return true;}).map(function(d){return toLizhiRow(d,org);});
+}
+function drillAttr(list, title, noDetail){
+  if(list && list.length){ var id=reg(list, title||''); return ' onclick="showDrill(\''+id+'\')" title="点击查看名单" style="cursor:pointer;font-weight:bold"'; }
+  if(noDetail){ var id=reg([{name:noDetail, noDetail:true}], title||''); return ' onclick="showDrill(\''+id+'\')" title="点击查看说明" style="cursor:pointer;font-weight:bold"'; }
+  return '';
+}
+function durFilter(name){
+  if(name==='≤30天(试用期内)') return function(d){return d.dur!=null&&d.dur<=30;};
+  if(name==='31-90天') return function(d){return d.dur>30&&d.dur<=90;};
+  if(name==='91-180天') return function(d){return d.dur>90&&d.dur<=180;};
+  if(name==='181-365天') return function(d){return d.dur>180&&d.dur<=365;};
+  if(name==='>365天') return function(d){return d.dur!=null&&d.dur>365;};
+  return function(){return false;};
+}
+function reasonLizhiSection(){
+  if(state.org === 'zixian' && window.ZX_LIZHI_REASON){
+    return renderZxLizhi(ZX_LIZHI_REASON);
+  }
+  if(!window.REASON_LIZHI) return '';
+  var R = REASON_LIZHI, k = R.kpi;
+  if(state.org !== R.org){
+    return '<div class="panel"><h3>离职原因专项分析（'+R.monthLabel+'）</h3>'
+      +'<div class="note">本专项分析基于蓝锦科技《离职明细2026》知识库数据，当前组织（'+ORG_NAME[state.org]+'）暂无对应离职明细，切换至「蓝锦科技」查看。</div></div>';
+  }
+  function kbox(t,v,s){ return '<div class="kpi"><div class="t">'+t+'</div><div class="v">'+v+'</div><div class="s">'+s+'</div></div>'; }
+  var h = '<div class="panel" style="border-left:4px solid var(--red)">'
+    + '<h3 style="color:var(--red)">离职原因专项分析 · '+R.monthLabel+'（来源：'+esc(R.source)+'）</h3>';
+  h += '<div class="cards">'
+    + kpi('离职总人数', k.total+' 人', '7月有效记录', lizhiList(R.details,'lanjin'), '7月离职全名单')
+    + kpi('主动离职', k.active+' 人', k.activePct+'%（员工提出）', lizhiList(R.details,'lanjin',function(d){return d.cat==='主动离职';}), '7月主动离职名单')
+    + kpi('劝退', k.quit+' 人', k.quitPct+'%（均考核不达标）', lizhiList(R.details,'lanjin',function(d){return d.cat==='劝退';}), '7月劝退名单')
+    + kpi('短期离职≤90天', k.short90+' 人', k.short90Pct+'（新人危机）', lizhiList(R.details,'lanjin',function(d){return d.dur!=null&&d.dur<=90;}), '7月短期离职(≤90天)名单')
+    + kpi('P0新人(实习)', k.p0+' 人', k.p0Pct+'（占比过半）', lizhiList(R.details,'lanjin',function(d){return (d.level||'').indexOf('P0')>=0;}), '7月P0新人名单')
+    + kpi('平均在职', k.avgDays+' 天', '最短 '+k.minDays+' / 最长 '+k.maxDays, lizhiList(R.details,'lanjin'), '7月离职名单')
+    + '</div>';
+  /* 原因排名 + 占比：图形化 */
+  var reasonGroups = {};
+  R.reasons.forEach(function(r){ reasonGroups[r.name] = lizhiList(R.details,'lanjin',function(d){return d.reason===r.name;}); });
+  var deptGroups = detailGroups(R.details, function(d){return d.dept;}, 'lanjin');
+  var tenureGroups = {};
+  R.byTenure.forEach(function(t){ tenureGroups[t.name] = lizhiList(R.details,'lanjin',durFilter(t.name)); });
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3 style="font-size:13px">离职原因排名（TOP）</h3>'+barsReason(reasonGroups, R.reasons, '离职原因·')+'</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">离职原因占比</h3>'+donut(' ', reasonGroups, '离职原因：', true)+'</div>';
+  h += '</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">原因解读</h3><div style="font-size:12px;line-height:1.8;color:var(--muted)">'
+    + R.reasons.map(function(r){ return '<div style="margin-bottom:5px"><b>'+esc(r.name)+'</b> · <span class="tag '+(r.type==='劝退'?'tg-red':'tg-amber')+'">'+esc(r.type)+'</span> · '+esc(r.desc)+'</div>'; }).join('')
+    + '</div></div>';
+  /* 部门 + 在职时长：图形化 */
+  h += '<div class="grid2">';
+  h += '<div class="panel"><h3 style="font-size:13px">按部门分布</h3>'+bars(deptGroups,'var(--amber)',null,'离职部门：')+'</div>';
+  h += '<div class="panel"><h3 style="font-size:13px">按在职时长分布</h3>'+barsOrdered(tenureGroups,'var(--red)','在职时长 ')+'</div>';
+  h += '</div>';
+  /* 关键发现 */
+  h += '<div class="insight"><b>关键发现：</b><br>'+R.findings.map(function(f){return '· '+esc(f);}).join('<br>')+'</div>';
+  /* 解决方案 */
+  R.solutions.forEach(function(s){
+    h += '<div class="insight tip"><b>【'+s.tag+'】'+esc(s.title)+'</b><ul style="margin:6px 0 0 18px;line-height:1.9">'
+      + s.items.map(function(it){return '<li>'+esc(it)+'</li>';}).join('')+'</ul></div>';
+  });
+  /* 明细清单 */
+  h += '<h3 style="font-size:13px;margin-top:6px">离职明细清单（'+R.monthLabel+' · '+k.total+'人）</h3>'
+    + '<div class="twrap"><table><thead><tr><th>#</th><th>姓名</th><th>部门</th><th>岗位</th><th>职级</th><th>入职</th><th>离职</th><th>在职(天)</th><th>类别</th><th>离职原因</th><th>详情</th><th>组长</th></tr></thead><tbody>'
+    + R.details.map(function(d){
+        var tag = d.cat==='劝退'?'tg-red':'tg-amber';
+        return '<tr><td>'+d.seq+'</td><td>'+esc(d.name)+'</td><td>'+esc(d.dept)+'</td><td>'+esc(d.post)+'</td><td>'+esc(d.level)+'</td><td>'+esc(d.entry)+'</td><td>'+esc(d.leave)+'</td><td>'+esc(d.dur)+'</td><td><span class="tag '+tag+'">'+esc(d.cat)+'</span></td><td>'+esc(d.reason)+'</td><td style="white-space:normal;max-width:240px">'+esc(d.detail)+'</td><td>'+esc(d.leader)+'</td></tr>';
+      }).join('')
+    + '</tbody></table></div>';
+  h += '</div>';
+  return h;
+}
+function avg(arr){ arr=arr.filter(function(x){return x!=null;}); return arr.length? arr.reduce(function(a,b){return a+b;},0)/arr.length : null; }
+function leaveAnalysis(org, lvs, hasReason){
+  if(!lvs.length) return '<div class="insight good">本期无离职记录。</div>';
+  var h='<div class="grid2">';
+  var buckets = {'≤7天':[],'8-30天':[],'1-3个月':[],'3-6个月':[],'6-12个月':[],'1年以上':[],'未知':[]};
+  lvs.forEach(function(l){
+    var d=l.onJobDays;
+    if(d==null) buckets['未知'].push(l);
+    else if(d<=7) buckets['≤7天'].push(l);
+    else if(d<=30) buckets['8-30天'].push(l);
+    else if(d<=90) buckets['1-3个月'].push(l);
+    else if(d<=180) buckets['3-6个月'].push(l);
+    else if(d<=365) buckets['6-12个月'].push(l);
+    else buckets['1年以上'].push(l);
+  });
+  Object.keys(buckets).forEach(function(k){ if(!buckets[k].length) delete buckets[k]; });
+  /* 占比环形图区 */
+  h += '</div><div class="donut-grid" style="margin-bottom:12px">';
+  h += donut('离职司龄（在职时长）占比', buckets, '在职时长 ', true);
+  h += donut('离职部门占比', groupBy(lvs,function(l){return l.dept;}), '离职部门：');
+  if(hasReason){
+    h += donut('离职原因占比', groupBy(lvs.filter(function(l){return l.reason;}),function(l){return l.reason;}), '离职原因：');
+    var withRank = lvs.filter(function(l){return l.rankImp;});
+    if(withRank.length) h += donut('离职职级占比', groupBy(withRank,function(l){return l.rankImp;}), '职级：');
+    var withAge = lvs.filter(function(l){return l.ageImp!=null&&l.ageImp!=='';});
+    if(withAge.length) h += donut('离职年龄段占比', ageBuckets(withAge,function(l){return l.ageImp;}), '年龄：', true);
+  }
+  h += '</div><div class="grid2">';
+  h += '<div><h3 style="font-size:13px">按司龄（在职时长）分布</h3>'+barsOrdered(buckets,'var(--red)','在职时长 ')+'</div>';
+  h += '<div><h3 style="font-size:13px">按部门分布（TOP10）</h3>'+bars(groupBy(lvs,function(l){return l.dept;}),'var(--amber)',10,'离职部门：')+'</div>';
+  h+='</div>';
+  var flash = lvs.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;}).length;
+  var flashR = pct(flash, lvs.length);
+  var deptGroups = groupBy(lvs,function(l){return l.dept;});
+  var deptTop = Object.keys(deptGroups).map(function(k){return [k, deptGroups[k].length];}).sort(function(a,b){return b[1]-a[1];})[0];
+  h += '<div class="insight"><b>复盘结论：</b>本期离职 '+lvs.length+' 人，其中入职30天内闪离 '+flash+' 人（'+flashR+'%）；离职最集中的部门是「'+esc(deptTop[0])+'」（'+deptTop[1]+'人）。'
+    + (hasReason ? '' : '<b>离职原因维度待导入钉钉后台离职表后自动补全。</b>')+'</div>';
+  var adv = [];
+  if(flashR>=30) adv.push('闪离占比'+flashR+'%过高——重点整改招聘端：岗位说明书如实描述工作强度与薪资结构，入职首周安排带教人并在第3/7/15天回访');
+  else if(flashR>0) adv.push('存在闪离现象（'+flash+'人），建议对30天内离职者逐一电话回访，区分"岗位不符预期"与"管理/环境问题"');
+  adv.push('对「'+esc(deptTop[0])+'」等离职集中部门，开展主管访谈+在职员工匿名调研，两周内输出改善动作');
+  if(hasReason) adv.push('结合原因分布：占比最高的原因即为下月专项治理方向，建议设定"该原因离职人数环比下降30%"的目标');
+  adv.push('司龄6个月以上老员工的离职需负责人一对一面谈留档，防止骨干流失形成连锁反应');
+  h += '<div class="insight tip"><b>解决方案与建议：</b><br>'+adv.map(function(a){return '· '+a;}).join('<br>')+'</div>';
+  return h;
+}
+function barsOrdered(groups, color, titlePrefix){
+  var keys = Object.keys(groups); var max = Math.max.apply(null, keys.map(function(k){return groups[k].length;}));
+  return keys.map(function(k){
+    var id = reg(groups[k], (titlePrefix||'')+k);
+    return '<div class="bar" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="n">'+k+'</div><div class="track"><div class="fill" style="width:'+Math.max(2,groups[k].length/max*100)+'%;background:'+color+'"></div></div><div class="val">'+groups[k].length+'人</div></div>';
+  }).join('');
+}
+
+function detailGroups(details, getter, org){
+  var m = {};
+  details.forEach(function(d){
+    var k = getter(d);
+    if(k==null || k==='') k='未填写';
+    (m[k]=m[k]||[]).push(toLizhiRow(d, org));
+  });
+  return m;
+}
+function barsReason(groups, reasons, titlePrefix){
+  var max = Math.max.apply(null, Object.keys(groups).map(function(k){return groups[k].length;})) || 1;
+  var map = {}; reasons.forEach(function(r){ map[r.name]=r; });
+  return Object.keys(groups).map(function(k){
+    var r = map[k] || {};
+    var color = r.type==='劝退' ? 'var(--red)' : 'var(--amber)';
+    var id = reg(groups[k], (titlePrefix||'')+k);
+    return '<div class="bar" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="n" title="'+esc(k)+'">'+esc(k)+'</div><div class="track"><div class="fill" style="width:'+Math.max(2,groups[k].length/max*100)+'%;background:'+color+'"></div></div><div class="val">'+groups[k].length+'人 ('+(r.pct||0)+'%)</div></div>';
+  }).join('') || '<div class="empty">无数据</div>';
+}
+function barsReasonZx(groups, reasons, titlePrefix){
+  var max = Math.max.apply(null, Object.keys(groups).map(function(k){return groups[k].length;})) || 1;
+  var map = {}; reasons.forEach(function(r){ map[r.name]=r; });
+  return Object.keys(groups).map(function(k){
+    var r = map[k] || {};
+    var color = r.type==='劝退' ? 'var(--red)' : (r.type==='自离' ? '#94a3b8' : 'var(--amber)');
+    var id = reg(groups[k], (titlePrefix||'')+k);
+    return '<div class="bar" style="cursor:pointer" onclick="showDrill(\''+id+'\')" title="点击查看名单"><div class="n" title="'+esc(k)+'">'+esc(k)+'</div><div class="track"><div class="fill" style="width:'+Math.max(2,groups[k].length/max*100)+'%;background:'+color+'"></div></div><div class="val">'+groups[k].length+'人 ('+(r.pct||0)+'%)</div></div>';
+  }).join('') || '<div class="empty">无数据</div>';
+}
+
+function openReasonModal(){ document.getElementById('modal-org').textContent = ORG_NAME[state.org]; document.getElementById('modal-bg').style.display='flex'; }
+function closeReasonModal(){ document.getElementById('modal-bg').style.display='none'; }
+function clearReason(){ localStorage.removeItem('hr_reason_'+state.org); document.getElementById('import-status').textContent='已清空当前组织的导入数据。'; render(); }
+function importReason(){
+  var f = document.getElementById('reason-file').files[0];
+  var txt = document.getElementById('reason-paste').value.trim();
+  if(f){ var r=new FileReader(); r.onload=function(e){ parseReason(e.target.result); }; r.readAsText(f,'utf-8'); }
+  else if(txt){ parseReason(txt); }
+  else { document.getElementById('import-status').textContent='请粘贴内容或选择文件。'; }
+}
+function parseReason(text){
+  var lines = text.split(/\r?\n/).filter(function(l){return l.trim();});
+  if(lines.length<2){ document.getElementById('import-status').textContent='数据不足（至少需要表头+1行）。'; return; }
+  var sep = lines[0].indexOf('\t')>=0 ? '\t' : ',';
+  var head = lines[0].split(sep).map(function(x){return x.replace(/["\s]/g,'');});
+  function col(names){ for(var i=0;i<head.length;i++){ for(var j=0;j<names.length;j++){ if(head[i].indexOf(names[j])>=0) return i; } } return -1; }
+  var iName=col(['姓名']), iReason=col(['离职原因','原因','离职类型']), iRank=col(['职级','级别','P级']), iPos=col(['岗位','职位']), iAge=col(['年龄']), iEntry=col(['入职日期','入职时间']);
+  if(iName<0){ document.getElementById('import-status').textContent='未找到"姓名"列，请检查表头。'; return; }
+  var map = reasonMap(state.org), n=0;
+  for(var i=1;i<lines.length;i++){
+    var c = lines[i].split(sep).map(function(x){return x.replace(/^"|"$/g,'').trim();});
+    var nm = c[iName]; if(!nm) continue;
+    var entry = iEntry>=0 ? normDate(c[iEntry]) : '';
+    var rec = { reason: iReason>=0?c[iReason]:null, rank: iRank>=0?c[iRank]:null, pos: iPos>=0?c[iPos]:null, age: iAge>=0?c[iAge]:null };
+    map[nm+'|'+(entry||'')] = rec; map[nm] = rec; n++;
+  }
+  localStorage.setItem('hr_reason_'+state.org, JSON.stringify(map));
+  document.getElementById('import-status').textContent='成功导入 '+n+' 条，已按姓名(+入职日期)自动匹配。';
+  render();
+}
+function openExtModal(){ document.getElementById('ext-org').textContent = ORG_NAME[state.org]; document.getElementById('ext-bg').style.display='flex'; }
+function closeExtModal(){ document.getElementById('ext-bg').style.display='none'; }
+function clearExt(){ localStorage.removeItem('hr_staffext_'+state.org); document.getElementById('ext-status').textContent='已清空当前组织的年龄/性别补充数据。'; render(); }
+function importExt(){
+  var f = document.getElementById('ext-file').files[0];
+  var txt = document.getElementById('ext-paste').value.trim();
+  if(f){ var r=new FileReader(); r.onload=function(e){ parseExt(e.target.result); }; r.readAsText(f,'utf-8'); }
+  else if(txt){ parseExt(txt); }
+  else { document.getElementById('ext-status').textContent='请粘贴内容或选择文件。'; }
+}
+function parseExt(text){
+  var lines = text.split(/\r?\n/).filter(function(l){return l.trim();});
+  if(lines.length<2){ document.getElementById('ext-status').textContent='数据不足（至少需要表头+1行）。'; return; }
+  var sep = lines[0].indexOf('\t')>=0 ? '\t' : ',';
+  var head = lines[0].split(sep).map(function(x){return x.replace(/["\s]/g,'');});
+  function col(names){ for(var i=0;i<head.length;i++){ for(var j=0;j<names.length;j++){ if(head[i].indexOf(names[j])>=0) return i; } } return -1; }
+  var iName=col(['姓名']), iAge=col(['年龄']), iBirth=col(['出生日期','出生年月','生日']), iGender=col(['性别']);
+  if(iName<0){ document.getElementById('ext-status').textContent='未找到"姓名"列，请检查表头。'; return; }
+  if(iAge<0 && iBirth<0 && iGender<0){ document.getElementById('ext-status').textContent='未找到"年龄/出生日期/性别"任一列。'; return; }
+  var map = staffExtMap(state.org), n=0;
+  var names = {}; D[state.org].staff.forEach(function(s){ names[s.name]=1; });
+  var matched = 0;
+  for(var i=1;i<lines.length;i++){
+    var c = lines[i].split(sep).map(function(x){return x.replace(/^"|"$/g,'').trim();});
+    var nm = c[iName]; if(!nm) continue;
+    var rec = map[nm] || {};
+    if(iAge>=0 && c[iAge]) rec.age = c[iAge].replace(/[^\d.]/g,'');
+    if(iBirth>=0 && c[iBirth]) rec.birth = normDate(c[iBirth]) || c[iBirth];
+    if(iGender>=0 && c[iGender]) rec.gender = c[iGender].indexOf('男')>=0?'男':(c[iGender].indexOf('女')>=0?'女':c[iGender]);
+    map[nm] = rec; n++;
+    if(names[nm]) matched++;
+  }
+  localStorage.setItem('hr_staffext_'+state.org, JSON.stringify(map));
+  document.getElementById('ext-status').textContent='成功导入 '+n+' 条，其中 '+matched+' 条匹配到当前在职花名册（按姓名匹配）。';
+  render();
+}
+function normDate(s){
+  if(!s) return '';
+  var m = String(s).match(/(\d{4})[-\/年.](\d{1,2})[-\/月.](\d{1,2})/);
+  return m ? m[1]+'-'+('0'+m[2]).slice(-2)+'-'+('0'+m[3]).slice(-2) : '';
+}
+
+function vView3(){
+  var org=state.org;
+  if(org!=='lanjin'){
+    return vView3ZxOvertime();
+  }
+  var staff = filterStaff(staffOf(org));
+  var all = staffOf(org);
+  var h = '<div class="note">数据来源：钉钉后台花名册（综合客服按四级部门路径拆为售前/售后）。本视图为客服P级人力专项分析 —— 含人力明细表、等级分布、P1工龄分析、实习/正式占比，及团队架构复盘。</div>';
+  h += csDash(org, staff);
+  h += '<div class="panel"><h3>数据分析复盘 · 客服团队架构问题诊断与解决方案</h3>'+analysisCustReview(org, all)+'</div>';
+  return h;
+}
+
+/* 视图3 · 紫弦：各仓库加班总时长（来源钉钉假勤月度汇总） */
+function overtimeMonth(){
+  var v = document.getElementById('f-time').value;
+  var now = new Date(), y=now.getFullYear(), m=now.getMonth();
+  if(v==='lastm') return ymd(new Date(y,m-1,1)).slice(0,7);
+  return ymd(new Date(y,m,1)).slice(0,7);
+}
+function vView3ZxOvertime(){
+  var O = window.ZX_OVERTIME;
+  if(!O || !O.months){ return '<div class="panel"><div class="empty">未生成加班数据（zx_overtime.js）。请先运行 scripts/fetch_overtime.py 生成。</div></div>'; }
+  var month = overtimeMonth();
+  var M = O.months[month];
+  if(!M){ return '<div class="panel"><div class="empty">暂无 '+esc(month)+' 的加班数据。</div></div>'; }
+  var timeVal = document.getElementById('f-time').value;
+  var timeNotice = (timeVal==='month' || timeVal==='lastm') ? '' : '<div class="insight tip"><b>提示：</b>加班数据按月汇总，当前展示 <b>'+esc(M.monthLabel)+'</b> 数据。</div>';
+
+  var p=document.getElementById('f-proj').value,
+      r=document.getElementById('f-rank').value,
+      pos=document.getElementById('f-pos').value,
+      nm=document.getElementById('f-name').value.trim();
+
+  var staffMap = {};
+  staffOf('zixian').forEach(function(s){ if(s.userId) staffMap[s.userId]=s; });
+
+  var filtered = {}, total={ot:0,to:0,final:0,count:0};
+  Object.keys(M.warehouses).forEach(function(wh){
+    if(p!=='all' && wh!==p) return;
+    var w = M.warehouses[wh];
+    var fpeople = w.people.filter(function(person){
+      var s = staffMap[person.userId] || person;
+      if(r!=='all' && s._rank!==r && s.rank!==r) return false;
+      if(pos!=='all' && s._pos!==pos && s._posClass!==pos && s._posRaw!==pos && s.position!==pos) return false;
+      if(nm && (s.name||person.name||'').indexOf(nm)<0) return false;
+      return true;
+    });
+    if(fpeople.length===0 && (r!=='all' || pos!=='all' || nm)) return;
+    var fot=0, fto=0;
+    fpeople.forEach(function(x){ fot+=x.ot||0; fto+=x.to||0; });
+    fot=Math.round(fot*10)/10; fto=Math.round(fto*10)/10;
+    var ffinal=Math.round((fot-fto)*10)/10;
+    filtered[wh]={ot:fot,to:fto,final:ffinal,count:fpeople.length,people:fpeople};
+    total.ot+=fot; total.to+=fto; total.count+=fpeople.length;
+  });
+  total.ot=Math.round(total.ot*10)/10; total.to=Math.round(total.to*10)/10;
+  total.final=Math.round((total.ot-total.to)*10)/10;
+
+  var h = '<div class="panel"><h3>紫弦科技 · 各仓库加班总时长（'+esc(M.monthLabel)+'）</h3>'
+    + '<div class="note">数据来源：加班总时长取自钉钉·智能人事·假勤管理·报表管理·月度汇总；加班转调休取自钉钉·智能人事·假勤管理·假期管理·请假记录导出（表单名称=请假，请假类型=加班转调休）。最终加班 = 加班总时长 − 加班转调休。生成于 '+esc(O.generatedAt)+'。</div>'
+    + timeNotice;
+  h += '<div class="cards">'
+    + kpi('紫弦加班总时长', fmt1(total.ot)+' h', '当月加班总小时数（含转调休）', null, null)
+    + kpi('加班转调休', fmt1(total.to)+' h', '已转调休的加班小时数', null, null)
+    + kpi('最终加班', fmt1(total.final)+' h', '加班总时长 − 转调休', null, null)
+    + kpi('覆盖人数', total.count+' 人', '已关联花名册的加班人员', null, null)
+    + '</div>';
+  h += '<div class="secgrid">';
+  var order = ['华中仓','华南仓','中创仓','尤也仓','服装仓','人资行政部','紫弦仓储中台','运营物控部','未分组'];
+  var keys = Object.keys(filtered);
+  order.forEach(function(k){ if(keys.indexOf(k)>=0) h += renderWh(k, filtered[k]); });
+  keys.forEach(function(k){ if(order.indexOf(k)<0) h += renderWh(k, filtered[k]); });
+  h += '</div>';
+  return h;
+}
+function renderWh(wh, w){
+  var idOt = reg(w.people, wh+' · 加班明细（'+w.count+'人）');
+  return '<div class="teamcard"><div class="tc-title">'+esc(wh)+' <span class="tc-sub">'+w.count+'人</span></div>'
+    + '<div class="mini">'
+    + '<div style="cursor:pointer" onclick="showDrill(\''+idOt+'\')" title="点击查看每人加班明细"><div class="mv">'+fmt1(w.ot)+'</div><div class="mt">加班总时长(h)</div></div>'
+    + '<div style="cursor:pointer" onclick="showDrill(\''+idOt+'\')"><div class="mv" style="color:var(--orange)">'+fmt1(w.to)+'</div><div class="mt">转调休(h)</div></div>'
+    + '<div style="cursor:pointer" onclick="showDrill(\''+idOt+'\')"><div class="mv" style="color:'+(w.final>0?'var(--red)':'var(--muted)')+'">'+fmt1(w.final)+'</div><div class="mt">最终加班(h)</div></div>'
+    + '</div></div>';
+}
+
+/* 客服团队架构复盘：基于实时数据诊断问题并给解决方案 */
+function analysisCustReview(org, all){
+  var execClasses = ['售前客服','售后客服'];
+  var execs = all.filter(function(s){ return execClasses.indexOf(s.custClass)>=0; });
+  var execTotal = execs.length;
+  var pLevels = pDist(execs);
+  var pN={}; ['P1','P2','P3','P4','P5','P6'].forEach(function(p){pN[p]=pLevels[p].length;});
+  var pLow=pN.P1+pN.P2, pMid=pN.P3+pN.P4, pHigh=pN.P5+pN.P6;
+  var prob=execs.filter(function(s){return s.probationStatus==='试用';});
+  var formal=execs.filter(function(s){return s.probationStatus==='转正';});
+  var probPct=pct(prob.length, execTotal);
+  var p1=pLevels['P1']||[], p1b=p1TenureBuckets(p1), p1Total=p1.length;
+  var p1Short=p1b['1个月以内'].length+p1b['1~3个月'].length;
+  var p1ShortPct=pct(p1Short,p1Total);
+  var p1Old=p1b['6个月以上'].length;
+  var qian=execs.filter(function(s){return s.custClass==='售前客服';}).length;
+  var hou=execs.filter(function(s){return s.custClass==='售后客服';}).length;
+  var ratio = hou? (qian/hou) : 0;
+  var mgrClasses=['高级经理','经理','主管','见习主管','组长','储备组长','实习组长','储备经理'];
+  var mgrs=all.filter(function(s){return mgrClasses.indexOf(s.custClass)>=0;}).length;
+  var supClasses=['AI训练师','质检','审核','助理','BD'];
+  var sups=all.filter(function(s){return supClasses.indexOf(s.custClass)>=0;});
+  var supPct=pct(sups.length, execTotal);
+  var zj=sups.filter(function(s){return s.custClass==='质检'||s.custClass==='审核';}).length;
+  var zjPct=pct(zj, execTotal);
+
+  var h='';
+  /* 整体盘面 */
+  h+='<div class="insight"><b>整体盘面（客服执行岗 '+execTotal+' 人）：</b>'
+    +'P级分布 P1 '+pN.P1+' / P2 '+pN.P2+' / P3 '+pN.P3+' / P4 '+pN.P4+' / P5 '+pN.P5+' / P6 '+pN.P6+'；'
+    +'试用期 '+prob.length+' 人（'+probPct+'%）；售前 '+qian+' / 售后 '+hou+'（'+fmt1(ratio)+':1）；'
+    +'管理岗 '+mgrs+' 人，支撑岗 '+sups.length+' 人（其中质检+审核 '+zj+' 人）。</div>';
+
+  /* 问题一：P1 新人留存危机 */
+  if(p1Total>0 && p1ShortPct>=90 && p1Old===0){
+    h+='<div class="insight warn"><b>⚠ 问题一 · P1 新人留存危机</b><br>'
+      +'· 当前 P1 共 <b>'+p1Total+' 人</b>，其中入职 ≤3 个月的占 <b>'+p1ShortPct+'%</b>（'+p1Short+' 人）；入职满 6 个月的 P1 为 <b>0 人</b>。<br>'
+      +'· 说明 P1 群体几乎无法沉淀：要么在半年内离职、要么被快速拔高晋升——无论哪种，都意味着<b>新人培养与留用机制失效</b>，基层极不稳定、带教成本被反复消耗，且存在"为填坑而晋升"稀释P级含金量的风险。</div>';
+  }
+
+  /* 问题二：等级结构头重脚轻、腰部偏薄 */
+  if(pHigh>0 && pct(pHigh,execTotal)<10 && pct(pLow,execTotal)>50){
+    h+='<div class="insight warn"><b>⚠ 问题二 · 等级结构底部厚重、顶层骨干稀缺</b><br>'
+      +'· P1+P2 占执行岗 <b>'+pct(pLow,execTotal)+'%</b>（'+pLow+' 人），中间层 P3+P4 仅 <b>'+pct(pMid,execTotal)+'%</b>（'+pMid+' 人），P4 较 P3 断崖式回落（'+pN.P4+' vs '+pN.P3+'）；'
+      +'顶层 P5+P6 仅 <b>'+pHigh+' 人</b>（'+pct(pHigh,execTotal)+'%）。<br>'
+      +'· "能独立扛指标、可带新人的骨干"严重不足，一旦骨干流失，业务承接能力会出现断点；且基层庞大意味着管理跨度与培训压力集中。</div>';
+  }
+
+  /* 问题三：售前/售后配比 */
+  if(ratio>1.4){
+    h+='<div class="insight warn"><b>⚠ 问题三 · 售前/售后配比失衡（'+fmt1(ratio)+':1）</b><br>'
+      +'· 售前 '+qian+' 人 vs 售后 '+hou+' 人，售前明显多于售后。<br>'
+      +'· 若售后承担退换货、挽单、客诉承接，售后人力偏紧会直接拉低满意度与复购；需结合各项目实际进线量校验配比，避免"重拉新、轻承接"。</div>';
+  } else if(ratio>0 && ratio<0.8){
+    h+='<div class="insight tip"><b>提示 · 售前/售后配比（'+fmt1(ratio)+':1）</b>：售后多于售前，需结合业务量确认是否售后承接富余、前端转化不足。</div>';
+  }
+
+  /* 问题四：支撑岗配比偏紧 */
+  if(supPct<8){
+    h+='<div class="insight warn"><b>⚠ 问题四 · 支撑/质检审核配比偏紧</b><br>'
+      +'· 支撑岗（AI训练师/质检/审核/助理/BD）共 '+sups.length+' 人，仅占执行岗 <b>'+supPct+'%</b>；其中质检+审核合计仅 <b>'+zj+' 人</b>（'+zjPct+'%），服务 '+execTotal+' 人执行团队。<br>'
+      +'· 质检审核是服务质量守门员，配比过低会导致服务标准难落地、问题发现滞后；AI训练师仅 '+sups.filter(function(s){return s.custClass==='AI训练师';}).length+' 人，AI辅助提效的推广力度受限。</div>';
+  }
+
+  /* 解决方案（汇总） */
+  h+='<div class="insight tip"><b>解决方案与建议</b><br>'
+    +'<b>① 止血新人流失（针对问题一）：</b>对 P1 设「7/15/30/90 天」四节点回访固定机制，由组长 1v1 跟进；梳理 P1 离职主因（薪酬/排班/带教），优先处理入职首月高流失；将"P1 满3个月留存率"纳入组长考核。<br>'
+    +'<b>② 打通晋升与保留通道（针对问题二）：</b>别只靠晋升填坑——建立 P2→P3→P4 的明确能力标准与季度评审，半年内把 P5/P6 骨干补到 15 人以上（当前 9 人）；对 P3/P4 设骨干津/带教补贴，稳住腰部。<br>'
+    +'<b>③ 校验售前售后配比（针对问题三）：</b>拉各项目近30天进线量，按"承接能力"重排售前/售后人头，目标售后占比不低于 40%；必要时从售前富余人力转岗培训补售后。<br>'
+    +'<b>④ 补强支撑体系（针对问题四）：</b>质检+审核年内扩到 8-10 人（现 5 人），使配比达 5-8%；AI训练师扩到 6 人以上，推进话术库与辅助工具落地，用提效抵消人力缺口。<br>'
+    +'<b>⑤ 看板跟踪：</b>本看板每日 9:00 自动更新，建议把 P1 留存率、P5/P6 人数、质检审核配比设为周度监控指标，直接对照本复盘跟踪改善进度。</div>';
+  return h;
+}
+
+/* ============ 视图4 · 项目人力结构分析（蓝锦按小组 / 紫弦按各仓） ============ */
+var TENURE_BUCKETS = ['1个月内','1~3个月','3~6个月','6~1年','1年以上','未知'];
+function tenureBucket(s){
+  var ed = s.entryDate; if(!ed) return '未知';
+  var p=(''+ed).split('-'); if(p.length<3) return '未知';
+  var ey=+p[0], em=+p[1], eday=+p[2];
+  var now=new Date(), ny=now.getFullYear(), nm=now.getMonth()+1, nd=now.getDate();
+  var months=(ny-ey)*12+(nm-em); if(nd<eday) months-=1; if(months<0) months=0;
+  if(months<1) return '1个月内'; if(months<3) return '1~3个月';
+  if(months<6) return '3~6个月'; if(months<12) return '6~1年';
+  return '1年以上';
+}
+var _LJ_GSET=null;
+function ljGroupSet(){ if(_LJ_GSET) return _LJ_GSET; var g={}; ljDeptGroups().forEach(function(n){ g[n]=1; }); _LJ_GSET=g; return g; }
+function ljGroup(s){
+  /* 蓝锦「小组」= 钉钉部门树中识别出的执行小组（见 ljDeptGroups）。
+     从 deptPath 末级向前找第一个属于小组集合的节点（处理「组→天猫专项→售前」这类多层拆分）；
+     若整条路径都不在小组集合内（人员直接挂在部门/项目/根节点），归入「未归入具体小组」，保证不丢人不乱归。 */
+  var dp=s.deptPath||[];
+  if(!dp.length) return s.dept||'未分组';
+  var gs=ljGroupSet();
+  for(var i=dp.length-1;i>=0;i--){ if(gs[dp[i]]) return dp[i]; }
+  return '未归入具体小组';
+}
+function ljDeptGroups(){
+  /* 动态从钉钉通讯录部门树（HR_DATA.lanjin.depts）识别「小组」：
+     规则 = 非拆分标签 / 非根 / 非财务郑州 excluded，且（有「售前/售后/天猫专项」直接子节点 或 为叶子节点）。
+     空组（如 SDX组）也保留，小组增减随通讯录自动更新。 */
+  var depts = (D.lanjin && D.lanjin.depts) || [];
+  var SPLIT = {'售前客服组':1,'售后客服组':1,'天猫专项组':1};
+  var byId={}, children={};
+  depts.forEach(function(t){ byId[t.deptId]=t; });
+  depts.forEach(function(t){ var p=t.parentId; if(p!=null) (children[p]=children[p]||[]).push(t.deptId); });
+  var out=[];
+  depts.forEach(function(t){
+    var nm=t.deptName;
+    if(!nm || SPLIT[nm] || nm==='根部门') return;
+    var kids=children[t.deptId]||[];
+    var hasSplit=kids.some(function(c){ var k=(byId[c]||{}).deptName; return SPLIT[k]; });
+    if(hasSplit || kids.length===0) out.push(nm);
+  });
+  return out;
+}
+function ljProj(s){ return s._proj || '未分配'; }
+function zxGroup(s){ return s.project || '未分组'; }
+function ljP(s){ var r=(s.rank||'').toUpperCase(); var m=r.match(/P\s*([0-6])/); return m?'P'+m[1]:null; }
+function zxP(s){
+  if(s.probationStatus==='试用') return '试用';
+  var pos=s.position||'', r=(s.rank||'');
+  if(pos.indexOf('经理')>=0) return '经理';
+  if(/高级主管/.test(pos)) return '高级主管';
+  if(/主管/.test(pos)) return '主管';
+  if(/组长/.test(pos) || r==='组长') return '组长';
+  if(r.indexOf('高级')>=0) return '高级';
+  if(r.indexOf('中级')>=0) return '中级';
+  if(r.indexOf('初级')>=0) return '初级';
+  return '其他';
+}
+/* 聚合：rows[组]={col:[...],count}, all[col]=[...]；explicitGroups 预置空组行（如 SDX组） */
+function v4Aggregate(staff, groupFn, colFn, cols, explicitGroups){
+  var rows={}, all={}; cols.forEach(function(c){all[c]=[];});
+  if(explicitGroups){ explicitGroups.forEach(function(g){ if(!rows[g]) rows[g]={count:0}; }); }
+  staff.forEach(function(s){
+    var g=groupFn(s), c=colFn(s);
+    if(cols.indexOf(c)<0) c=cols[cols.length-1];
+    if(!rows[g]) rows[g]={count:0};
+    (rows[g][c]=rows[g][c]||[]).push(s); rows[g].count++;
+    all[c].push(s);
+  });
+  return {rows:rows, all:all};
+}
+function v4Render(title, dimLabel, cols, agg){
+  var gkeys=Object.keys(agg.rows).sort(function(a,b){return agg.rows[b].count-agg.rows[a].count;});
+  var head='<tr><th class="v4l">'+esc(dimLabel)+'</th>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'<th>合计</th></tr>';
+  var body='';
+  gkeys.forEach(function(g){
+    var row=agg.rows[g];
+    var cells=cols.map(function(c){
+      var arr=row[c]||[];
+      var id=reg(arr, title+' · '+g+' · '+c);
+      return '<td class="v4c" onclick="showDrill(\''+id+'\')" title="'+arr.length+'人 · 点击下钻">'+arr.length+'</td>';
+    }).join('');
+    body+='<tr><td class="v4l" title="共'+gkeys.length+'个维度">'+esc(g)+'</td>'+cells+'<td class="v4t">'+row.count+'</td></tr>';
+  });
+  var totalPeople=0;
+  var allCells=cols.map(function(c){ var arr=agg.all[c]||[]; totalPeople+=arr.length; var id=reg(arr, title+' · 整体 · '+c); return '<td class="v4t" onclick="showDrill(\''+id+'\')" title="全组织 '+arr.length+'人">'+arr.length+'</td>'; }).join('');
+  body+='<tr class="v4all"><td class="v4l">全'+esc(dimLabel)+'(合计)</td>'+allCells+'<td class="v4t">'+totalPeople+'</td></tr>';
+  return '<table class="v4table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
+}
+function vView4(){ return state.org==='zixian' ? vView4ZX() : vView4LJ(); }
+function vView4LJ(){
+  /* 视图4 蓝锦：按「小组」= 动态从钉钉通讯录部门树识别的执行小组（含项目组下小组 / 职能组 / 空组），
+     到「海洋至尊组 / EHD组 / 抖快海洋至尊组」这类末级节点；售前/售后/天猫专项为组内拆分标签，自动归并到所属小组。
+     人员按花名册（钉钉后台）入职时间→司龄、职级→P级 聚合。无双 08-20 最终口径。 */
+  var base = filterStaff(staffOf('lanjin'));
+  var staff = base;
+  /* 小组列表 = 通讯录部门树识别（含空组） ∪ 在职人员实际归属，去重；有人数在前按人数降序、空组在后 */
+  var treeGroups = ljDeptGroups();
+  var cnt = {};
+  base.forEach(function(s){ var g=ljGroup(s); cnt[g]=(cnt[g]||0)+1; });
+  var grpSet = {}; treeGroups.forEach(function(g){ grpSet[g]=1; });
+  Object.keys(cnt).forEach(function(g){ grpSet[g]=1; });
+  var allGroups = Object.keys(grpSet);
+  allGroups.sort(function(a,b){ var ca=cnt[a]||0, cb=cnt[b]||0; return (cb-ca) || (a<b?-1:1); });
+  var gN = allGroups.length;
+  var tenCols = TENURE_BUCKETS;
+  /* P级列：与主看板 rankNorm 完全一致（P1-P6 + 组长/主管/经理/职员/未定级等原值，null→未定级） */
+  var pSet = {};
+  base.forEach(function(s){ pSet[rankNorm(s,'lanjin') || '未定级'] = 1; });
+  var pP = ['P1','P2','P3','P4','P5','P6'].filter(function(p){ return pSet[p]; });
+  var pO = Object.keys(pSet).filter(function(r){ return r!=='未定级' && pP.indexOf(r)<0; }).sort();
+  var pCols = pP.concat(pO).concat(['未定级']);
+  function ljRank(s){ return rankNorm(s,'lanjin') || '未定级'; }
+  var h='<div class="panel"><h3>蓝锦科技 · 项目执行小组人力结构分析（按小组）</h3>'
+    +'<div class="note">维度「小组」<b>动态从钉钉通讯录部门树识别</b>（含项目执行组、职能组、空组），到「海洋至尊组 / EHD组 / 抖快海洋至尊组」这类末级节点；售前/售后/天猫专项为组内拆分标签，已自动归并到所属小组。共 <b>'+gN+'</b> 个小组，合计在职 <b>'+staff.length+'</b> 人（与总看板蓝锦在职一致）。直接挂在部门/项目/根节点、未归入任何具体小组的人员，单列「未归入具体小组」。司龄按花名册入职日期算至今天；P级取花名册职级（rankNorm：P1-P6 + 组长/主管/经理/职员/未定级）。<b>小组增减随通讯录自动更新</b>。</div>';
+  h+='<div class="subhead">一、司龄时间分布（各小组）</div>'+v4Render('蓝锦司龄','小组',tenCols,v4Aggregate(staff,ljGroup,tenureBucket,tenCols,allGroups));
+  h+='<div class="subhead">二、P级人力分布（各小组）</div>'+v4Render('蓝锦P级','小组',pCols,v4Aggregate(staff,ljGroup,ljRank,pCols,allGroups));
+  return h+'</div>';
+}
+function vView4ZX(){
+  var staff=filterStaff(staffOf('zixian'));
+  var tenCols=TENURE_BUCKETS, pCols=['试用','初级','中级','高级','组长','主管','高级主管','经理','其他'];
+  var h='<div class="panel"><h3>紫弦科技 · 项目人力结构分析（按各仓）</h3>'
+    +'<div class="note">维度「仓」= 花名册<b>项目字段</b>（华中仓/华南仓/中创仓/尤也仓/服装仓等）。司龄按入职日期算至今天，区间：1月内 / 1~3月 / 3~6月 / 6~1年 / 1年以上。职级按 试用/初级/中级/高级/组长/主管/高级主管/经理 归一（试用期单列「试用」）。</div>';
+  h+='<div class="subhead">一、司龄时间分布（各仓）</div>'+v4Render('紫弦司龄','仓',tenCols,v4Aggregate(staff,zxGroup,tenureBucket,tenCols));
+  h+='<div class="subhead">二、职级人力分布（各仓）</div>'+v4Render('紫弦职级','仓',pCols,v4Aggregate(staff,zxGroup,zxP,pCols));
+  return h+'</div>';
+}
+
+function render(){
+  if(!D){ document.getElementById('content').innerHTML='<div class="panel"><div class="empty">未找到数据文件 data.js —— 请先运行 scripts/update_all.py 生成数据。</div></div>'; return; }
+  DRILL = {}; drillSeq = 0;
+  document.getElementById('gen-at').textContent = '数据时间：'+(D.generatedAt||'—');
+  document.getElementById('meta-info').textContent = ORG_NAME[state.org]+' · 在职'+D[state.org].stats.staffCount+'人 · 历史离职'+D[state.org].stats.leaverCount+'人';
+  var v = state.view;
+  var html = v==='overview'?vOverview() : v==='view1'?vView1() : v==='view2'?vView2() : v==='view3'?vView3() : v==='view4'?vView4() : v==='recruit'?vRecruit() : vRecruit2();
+  /* 时间截面提示：选中具体时间节点时，明确告诉用户当前看的是哪个时间节点的真实数据 */
+  if(document.getElementById('f-time') && document.getElementById('f-time').value!=='all'){
+    html = '<div class="note" style="background:var(--sum-bg,#f0f4ff);padding:10px 14px;border-radius:8px;margin-bottom:12px">⏱ 当前为 <b>'+timeLabel()+'</b> 流量窗口：<b>本期入职 / 本期离职</b> = 该周期内的真实流量（含入职即离）；<b>总人数 / 试用期 / 占比分析</b> = 当前最新在职全量（不随时间窗口截断）。部门树、组织架构为当前实际架构（历史部门 / 岗位归属不随此变动）。</div>' + html;
+  }
+  document.getElementById('content').innerHTML = html;
+}
+document.querySelectorAll('.nav').forEach(function(el){
+  el.onclick=function(){ document.querySelectorAll('.nav').forEach(function(x){x.classList.remove('on');}); el.classList.add('on'); state.view=el.dataset.view; render(); };
+});
+document.querySelectorAll('.orgtab').forEach(function(el){
+  el.onclick=function(){ document.querySelectorAll('.orgtab').forEach(function(x){x.classList.remove('on');}); el.classList.add('on'); state.org=el.dataset.org; buildFilters(); render(); };
+});
+['f-time','f-proj','f-rank','f-pos'].forEach(function(id){ document.getElementById(id).onchange=render; });
+document.getElementById('f-name').oninput=function(){ render(); };
+if(D){ buildFilters(); }
+render();
+
+/* ============ 鉴权 · 账号体系 · PWA ============ */
+window.AUTH = null;
+function orgName(o){ return o==='lanjin' ? '蓝锦' : o==='zixian' ? '紫弦' : o; }
+function applyAuth(){
+  var a = window.AUTH; if(!a) return;
+  /* 顶部显示数据更新时间，让刷新状态肉眼可见（破 CDN 缓存感知盲区） */
+  try {
+    var mi = document.getElementById('meta-info');
+    if (mi) mi.textContent = '数据更新于 ' + (window.__GEN_AT__ || (window.HR_DATA && window.HR_DATA.generatedAt) || '—');
+  } catch(e){}
+  /* 组织可见范围：不在范围内的 tab 隐藏，默认切到首个可见组织 */
+  var orgs = (a.orgs && a.orgs.length) ? a.orgs : ['lanjin','zixian'];
+  var firstOk = null;
+  document.querySelectorAll('.orgtab').forEach(function(el){
+    var o = el.dataset.org;
+    if(orgs.indexOf(o) < 0){ el.style.display = 'none'; }
+    else if(!firstOk){ firstOk = o; }
+  });
+  if(firstOk && orgs.indexOf(state.org) < 0){ state.org = firstOk; }
+  document.querySelectorAll('.orgtab').forEach(function(x){
+    x.classList.toggle('on', x.dataset.org === state.org && x.style.display !== 'none');
+  });
+  /* 管理员才显示「导入」按钮（用于本地补数据；线上数据以自动刷新为准） */
+  var isAdmin = a.role === 'admin';
+  if(document.getElementById('btn-reason')) document.getElementById('btn-reason').style.display = isAdmin ? '' : 'none';
+  if(document.getElementById('btn-ext')) document.getElementById('btn-ext').style.display = isAdmin ? '' : 'none';
+  /* 用户栏 */
+  var bar = document.getElementById('user-bar');
+  if(bar){
+    var roleTag = isAdmin
+      ? ' <span class="tag tg-purple">管理员</span>'
+      : ' <span class="tag" style="background:#e8f6ee;color:#1a8a4f;border:1px solid #bfe6cd">查看</span>';
+    bar.innerHTML = '👤 ' + esc(a.name || a.username)
+      + roleTag
+      + (isAdmin ? ' <button class="btn" onclick="openAdmin()">账号管理</button>' : '')
+      + ' <button class="btn" onclick="doLogout()">退出</button>';
+  }
+  buildFilters(); render();
+}
+/* 静态免费版：无后端，认证完全走前端密码门（#hrGate + localStorage）。
+   登录成功后由底部 hrGate 脚本调用 loginAs() -> applyAuth() 渲染，不再请求 /api/me。 */
+
+function doLogout(){
+  try{ localStorage.removeItem('hr_gate'); localStorage.removeItem('hr_user'); }catch(e){}
+  window.location.reload();
+}
+
+/* 管理员：账号管理弹窗 */
+function openAdmin(){
+  alert('当前为静态免费版，账号管理（增删/重置密码）暂不可用；\n如需调整账号，请联系管理员在源码 ACCOUNTS 中维护。'); return;
+  fetch('/api/users').then(function(r){ return r.json(); }).then(function(d){
+    if(!d.ok){ alert(d.msg || '无权限'); return; }
+    var rows = (d.users || []).map(function(u){
+      var vis = (u.orgs || []).map(orgName).join('、') || '全部';
+      return '<tr><td>'+esc(u.name || u.username)+'</td><td>'+esc(u.username)+'</td><td>'+(u.role==='admin'?'管理员':'查看')+'</td><td>'+vis+'</td>'
+        +'<td><button class="btn" onclick="admReset(\''+u.username+'\')">重置密码</button> <button class="btn" onclick="admDel(\''+u.username+'\')">删除</button></td></tr>';
+    }).join('');
+    var html = '<div class="modal" style="max-width:780px"><h3>账号管理（管理员）</h3>'
+      + '<div class="note">新增账号：账号 / 密码必填；可见范围勾选；角色选「管理员」可管理他人账号。账号默认看全部，可在下方限定。</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center">'
+      + '<input id="a-user" placeholder="账号" style="padding:6px 10px;border:1px solid var(--line);border-radius:7px;width:120px">'
+      + '<input id="a-pass" placeholder="密码" style="padding:6px 10px;border:1px solid var(--line);border-radius:7px;width:120px">'
+      + '<input id="a-name" placeholder="姓名(可选)" style="padding:6px 10px;border:1px solid var(--line);border-radius:7px;width:120px">'
+      + '<select id="a-role" style="padding:6px 10px;border:1px solid var(--line);border-radius:7px"><option value="viewer">查看</option><option value="admin">管理员</option></select>'
+      + '<label style="font-size:12px"><input type="checkbox" id="a-lanjin" checked> 蓝锦</label>'
+      + '<label style="font-size:12px"><input type="checkbox" id="a-zixian" checked> 紫弦</label>'
+      + '<button class="btn" style="background:var(--blue);color:#fff;border-color:var(--blue)" onclick="admAdd()">新增</button>'
+      + '</div>'
+      + '<div class="twrap"><table><thead><tr><th>姓名</th><th>账号</th><th>角色</th><th>可见范围</th><th>操作</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      + '<div class="row"><button class="btn" onclick="document.getElementById(\'admin-bg\').style.display=\'none\'">关闭</button></div></div>';
+    var bg = document.getElementById('admin-bg');
+    bg.innerHTML = html; bg.style.display = 'flex';
+  });
+}
+function admAdd(){
+  var orgs = [];
+  if(document.getElementById('a-lanjin') && document.getElementById('a-lanjin').checked) orgs.push('lanjin');
+  if(document.getElementById('a-zixian') && document.getElementById('a-zixian').checked) orgs.push('zixian');
+  fetch('/api/users', { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ username:document.getElementById('a-user').value, password:document.getElementById('a-pass').value, name:document.getElementById('a-name').value, role:document.getElementById('a-role').value, orgs:orgs }) })
+    .then(function(r){ return r.json(); }).then(function(d){ if(d.ok){ openAdmin(); } else alert(d.msg || '新增失败'); });
+}
+function admReset(u){
+  var p = prompt('为「'+u+'」设置新密码：'); if(!p) return;
+  fetch('/api/users/'+encodeURIComponent(u)+'/reset', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ password:p }) })
+    .then(function(r){ return r.json(); }).then(function(d){ alert(d.ok ? '已重置' : ('失败：'+(d.msg||''))); });
+}
+function admDel(u){
+  if(!confirm('确认删除账号「'+u+'」？')) return;
+  fetch('/api/users/'+encodeURIComponent(u), { method:'DELETE' })
+    .then(function(r){ return r.json(); }).then(function(d){ if(d.ok){ openAdmin(); } else alert(d.msg || '删除失败'); });
+}
+
+/* PWA：先强制注销所有已注册的 Service Worker，避免旧缓存(含旧 data.js)残留导致登录看到旧数据；
+   再注册透明网络代理 sw.js（见 sw.js：纯网络、永不缓存，数据始终最新）。 */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ try{ r.unregister(); }catch(_){} });
+  }).catch(function(){});
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
+</script>
+
+<script>
+(function(){
+  var ACCOUNTS = {
+    '韩鹏超':'521csl!@','杨松':'yangsong','肖换换':'xiaoxiao','卓峰':'zhuofeng',
+    '老梅':'laomei','罗娜':'luona','锦书':'jinshu','李珍':'lizhen'
+  };
+  var ADMIN = { '韩鹏超':1, '老梅':1 };
+  var gate = document.getElementById('hrGate');
+  function loginAs(u){
+    try{ localStorage.setItem('hr_gate','1'); localStorage.setItem('hr_user', u); }catch(e){}
+    if(gate) gate.style.display = 'none';
+    window.AUTH = { username:u, name:u, role: ADMIN[u] ? 'admin' : 'viewer', orgs:['lanjin','zixian'] };
+    applyAuth();
+  }
+  function tryLogin(){
+    var u=document.getElementById('hrUser').value.trim();
+    var p=document.getElementById('hrPass').value;
+    var err=document.getElementById('hrErr');
+    if(ACCOUNTS[u] && ACCOUNTS[u]===p){ loginAs(u); }
+    else { err.textContent='账号或密码错误'; }
+  }
+  try {
+    if(localStorage.getItem('hr_gate')==='1'){
+      var u = localStorage.getItem('hr_user') || '';
+      if(u && ACCOUNTS[u]){ loginAs(u); }
+      else { try{ localStorage.removeItem('hr_gate'); }catch(e){} if(gate) gate.style.display='flex'; }
+    }
+  } catch(e){}
+  document.getElementById('hrBtn').addEventListener('click', tryLogin);
+  document.getElementById('hrPass').addEventListener('keydown', function(e){ if(e.key==='Enter') tryLogin(); });
+})();
+</script>
+
+</body>
+</html>
