@@ -224,7 +224,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 // 破 CDN 对入口页（无 query）的永久缓存：先同步拉 version.json（带时间戳→必回源）拿最新版本号，
 // 再用该版本号动态加载数据文件。这样即使 index.html 本身是 CDN 旧缓存，数据也永远是最新的。
 (function(){
-  var v = '202609241709'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202609241801'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
