@@ -211,7 +211,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 <script>
 // 强制刷新数据文件，避免浏览器/PWA/Railway缓存旧版数据
 (function(){
-  var v = '202610101427'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202610101429'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
