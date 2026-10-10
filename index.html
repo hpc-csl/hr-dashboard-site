@@ -1692,7 +1692,7 @@ if(D){ buildFilters(); }
 render();
 
 /* ============ 鉴权 · 账号体系 · PWA ============ */
-window.AUTH = null;
+window.AUTH = {name:'访客', role:'viewer', orgs:['lanjin','zixian']};
 function orgName(o){ return o==='lanjin' ? '蓝锦' : o==='zixian' ? '紫弦' : o; }
 function applyAuth(){
   var a = window.AUTH; if(!a) return;
@@ -1725,13 +1725,10 @@ function applyAuth(){
   }
   buildFilters(); render();
 }
-fetch('/api/me')
-  .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
-  .then(function(d){ window.AUTH = d.me; applyAuth(); })
-  .catch(function(){ window.location.href = '/login'; });
+applyAuth();
 
 function doLogout(){
-  fetch('/api/logout', { method:'POST' }).then(function(){ window.location.href = '/login'; });
+  fetch('/api/logout', { method:'POST' }).then(function(){ location.reload(); });
 }
 
 /* 管理员：账号管理弹窗 */
