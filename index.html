@@ -211,7 +211,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 <script>
 // 强制刷新数据文件，避免浏览器/PWA/Railway缓存旧版数据
 (function(){
-  var v = '202610101051'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202610101427'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
@@ -356,7 +356,17 @@ function reasonMap(org){
 }
 function leaversOf(org){
   var rm = reasonMap(org);
-  return D[org].leavers.map(function(l){
+  var src = D[org].leavers;
+  /* 时间=上月且该月有 HR 台账 history → 补入快照（9-21 后关停）漏掉的台账离职，按 姓名|离职日期 去重 */
+  var hy = histYmOverride(org);
+  if(hy && D[org].history && D[org].history[hy]){
+    var seen = {};
+    D[org].leavers.forEach(function(l){ seen[(l.name||'')+'|'+(l.resignDate||l.leaveDate||'')] = 1; });
+    src = D[org].leavers.concat((D[org].history[hy].leavers||[]).filter(function(l){
+      return !seen[(l.name||'')+'|'+(l.resignDate||'')];
+    }));
+  }
+  return src.map(function(l){
     var o = Object.assign({}, l);
     var k1 = (l.name||'')+'|'+(l.entryDate||'');
     var ext = rm[k1] || rm[l.name] || null;
@@ -365,10 +375,24 @@ function leaversOf(org){
     return o;
   });
 }
+/* 时间=上月 且该月有 HR 台账 history（整月窗口）→ 返回该月 ym，流量数据改用台账口径 */
+function histYmOverride(org){
+  var tf = document.getElementById('f-time');
+  if(!tf || tf.value!=='lastm') return null;
+  var H = (D[org] && D[org].history) || null; if(!H) return null;
+  var r = timeRange(); if(!r) return null;
+  var ym = r[0].slice(0,7);
+  if(!H[ym]) return null;
+  var lastDay = new Date(parseInt(ym.slice(0,4),10), parseInt(ym.slice(5,7),10), 0).getDate();
+  if(r[0].slice(8,10)!=='01' || r[1].slice(8,10)!==('0'+lastDay).slice(-2)) return null;
+  return ym;
+}
 /* 本期入职（当月全量，含当月入职当月离职）：来自后台预计算 D[org].joiners
    后台按钉钉花名册(在职)+离职名单 入職日期并集统计，整个自然月，凡是当月入职都计入 */
 function joinersOf(org){
-  return (D[org].joiners||[]).map(function(j){
+  var hy = histYmOverride(org);
+  var src = (hy && D[org].history && D[org].history[hy]) ? (D[org].history[hy].joiners||[]) : (D[org].joiners||[]);
+  return src.map(function(j){
     var o = Object.assign({}, j);
     o._rank = rankNorm(o, org);
     o._pos = posMerge(o.position, org);
@@ -400,6 +424,7 @@ function isMonthView(){ return document.getElementById('f-time').value==='month'
 function joinListFor(org, range){
   var list;
   if(isMonthView()){ list = joinersOf(org); }
+  else if(histYmOverride(org)){ list = joinersOf(org); }   /* 上月+有台账：直接用台账全量入职（含当月入当月离） */
   else {
     var m = {};
     staffOf(org).forEach(function(s){ if(inRange(s.entryDate, range)) m[s.userId||('s_'+s.name)] = s; });
@@ -963,15 +988,15 @@ function vView2LJ(){
 
 function vRecruit(){
   var org=state.org, all=staffAt(org), leav=leaversOf(org), range=timeRange();
-  // —— 历史月份入口（仅蓝锦，来源 HR《离职明细2026》台账）——
-  var H = (org==='lanjin' && D.lanjin.history) ? D.lanjin.history : null;
+  // —— 历史月份入口（蓝锦：HR《离职明细2026》台账；紫弦：《仓储招聘计划&员工关系工作表》离职面谈台账）——
+  var H = (D[org] && D[org].history && Object.keys(D[org].history).length) ? D[org].history : null;
   var useHist = !!(H && state.histMonth && H[state.histMonth]);
   var histSel = '';
   if(H){
     var opts = '<option value="">本月（当前月）</option>';
     Object.keys(H).sort().reverse().forEach(function(ym){ opts += '<option value="'+ym+'"'+(state.histMonth===ym?' selected':'')+'>'+H[ym].monthLabel+'</option>'; });
     histSel = '<div class="filters" style="margin-bottom:14px"><label>📅 统计月份</label><select id="f-hist">'+opts+'</select>'
-            + '<span style="font-size:12px;color:var(--muted)">蓝锦·历史月份回看（数据来源：HR《离职明细2026》台账）。选「本月」显示系统当月实时数据。</span></div>';
+            + '<span style="font-size:12px;color:var(--muted)">'+(org==='lanjin'?'蓝锦':'紫弦')+'·历史月份回看（数据来源：HR 台账）。选「本月」显示系统当月实时数据。</span></div>';
   }
   var joins, lvs, label, hasReason, flashList;
   if(useHist){
