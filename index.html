@@ -125,18 +125,6 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 </style>
 </head>
 <body>
-
-<div id="hrGate" style="position:fixed;inset:0;background:#101828;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Microsoft YaHei','PingFang SC',sans-serif">
-  <div style="background:#fff;border-radius:14px;padding:32px 36px;width:330px;box-shadow:0 10px 40px rgba(0,0,0,.35)">
-    <div style="font-size:18px;font-weight:700;color:#101828;margin-bottom:4px">HR人力数据看板</div>
-    <div style="font-size:12px;color:#6b7686;margin-bottom:20px">蓝锦科技 / 紫弦科技 · 请输入账号密码</div>
-    <input id="hrUser" placeholder="账号" autocomplete="username" style="width:100%;padding:10px 12px;border:1px solid #e5e9f0;border-radius:8px;margin-bottom:12px;font-size:14px;box-sizing:border-box">
-    <input id="hrPass" type="password" placeholder="密码" autocomplete="current-password" style="width:100%;padding:10px 12px;border:1px solid #e5e9f0;border-radius:8px;margin-bottom:14px;font-size:14px;box-sizing:border-box">
-    <button id="hrBtn" style="width:100%;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">登录</button>
-    <div id="hrErr" style="color:#dc2626;font-size:12px;margin-top:10px;min-height:16px"></div>
-  </div>
-</div>
-
 <div class="app">
   <div class="side">
     <div class="logo">HR人力资源系统<small id="side-org">蓝锦科技 / 紫弦科技</small></div>
@@ -221,10 +209,9 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 <div class="modal-bg" id="admin-bg" style="display:none" onclick="if(event.target===this)this.style.display='none'"></div>
 
 <script>
-// 破 CDN 对入口页（无 query）的永久缓存：先同步拉 version.json（带时间戳→必回源）拿最新版本号，
-// 再用该版本号动态加载数据文件。这样即使 index.html 本身是 CDN 旧缓存，数据也永远是最新的。
+// 强制刷新数据文件，避免浏览器/PWA/Railway缓存旧版数据
 (function(){
-  var v = '202610100910'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202610101051'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
@@ -253,7 +240,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 </script>
 <script>
 var D = window.HR_DATA || null;
-var state = { org:'lanjin', view:'overview' };
+var state = { org:'lanjin', view:'overview', histMonth:'' };
 var ORG_NAME = { lanjin:'蓝锦科技', zixian:'紫弦科技' };
 var LJ_PROJECTS = ['梦尔达','水云兔','山下有松','天厉','中创','尤也','欧美斯','梦江','正合','美赞臣','文凡','聚宏','唤起猫娘'];
 var LJ_TEAM = {'梦尔达':'梅江铃团队','水云兔':'梅江铃团队','山下有松':'梅江铃团队','天厉':'梅江铃团队','唤起猫娘':'梅江铃团队','中创':'李建红团队','尤也':'李建红团队','欧美斯':'李建红团队','梦江':'李建红团队','正合':'李建红团队','美赞臣':'李建红团队','文凡':'李建红团队','聚宏':'李建红团队'};
@@ -726,7 +713,7 @@ function vOverview(){
     +kpi('试用期', probList.length+'人', '占比 '+pct(probList.length,staff.length)+'% · 源：钉钉员工状态=试用 · 数据生成于 '+(D.generatedAt||'?')+' · 前端统计='+all.filter(function(s){return s.probationStatus==='试用';}).length+' · 版本V3', probList, '试用期人员')
     +kpi('电商销售部人力', dsList.length+'人', '挽单团队 · 源：钉钉职位/部门 · 点击看职位明细', dsList, '电商销售部人力（挽单线）')
     +kpi('男 / 女', maleList.length+' / '+femaleList.length, '点击查看名单', maleList.concat(femaleList), '性别明细（男'+maleList.length+' / 女'+femaleList.length+'）')
-    +kpi('平均年龄', ageList.length? (fmt1(avgAge)+'岁') : '—', ageList.length? '有年龄数据 '+ageList.length+'人':'待钉钉后台补填员工出生日期', ageList, '有年龄数据人员')
+    +kpi('平均年龄', fmt1(avgAge)+'岁', ageList.length? '有年龄数据 '+ageList.length+'人':'待导入补充表', ageList, '有年龄数据人员')
     +kpi('平均司龄', fmt1(avgTen)+'年', '', tenList, '在职人员（按司龄）')
     +'</div>';
   /* 占比分析：环形图 */
@@ -976,26 +963,47 @@ function vView2LJ(){
 
 function vRecruit(){
   var org=state.org, all=staffAt(org), leav=leaversOf(org), range=timeRange();
-  var joins = joinListFor(org, range);
-  var lvs = filterLeavers(leav, true);
-  var hasReason = lvs.some(function(l){return l.reason;});
-  var flashList = lvs.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;});
-  var h = '<div class="cards">'
-    +kpi('本期入职', joins.length+'人', timeLabel(), joins, '本期入职（'+timeLabel()+'）')
-    +kpi('本期离职', lvs.length+'人', timeLabel(), lvs, '本期离职（'+timeLabel()+'）')
+  // —— 历史月份入口（仅蓝锦，来源 HR《离职明细2026》台账）——
+  var H = (org==='lanjin' && D.lanjin.history) ? D.lanjin.history : null;
+  var useHist = !!(H && state.histMonth && H[state.histMonth]);
+  var histSel = '';
+  if(H){
+    var opts = '<option value="">本月（当前月）</option>';
+    Object.keys(H).sort().reverse().forEach(function(ym){ opts += '<option value="'+ym+'"'+(state.histMonth===ym?' selected':'')+'>'+H[ym].monthLabel+'</option>'; });
+    histSel = '<div class="filters" style="margin-bottom:14px"><label>📅 统计月份</label><select id="f-hist">'+opts+'</select>'
+            + '<span style="font-size:12px;color:var(--muted)">蓝锦·历史月份回看（数据来源：HR《离职明细2026》台账）。选「本月」显示系统当月实时数据。</span></div>';
+  }
+  var joins, lvs, label, hasReason, flashList;
+  if(useHist){
+    joins = (H[state.histMonth].joiners||[]).map(function(j){ var o=Object.assign({},j); o._rank=j._rank; o._posRaw=j._posRaw; o._proj=j._proj; o._team=j._team; return o; });
+    lvs = (H[state.histMonth].leavers||[]).map(function(l){ return Object.assign({},l); });
+    label = H[state.histMonth].monthLabel+'（历史）';
+    hasReason = false;
+    flashList = lvs.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;});
+  } else {
+    joins = joinListFor(org, range);
+    lvs = filterLeavers(leav, true);
+    label = timeLabel();
+    hasReason = lvs.some(function(l){return l.reason;});
+    flashList = lvs.filter(function(l){return l.onJobDays!=null&&l.onJobDays<=30;});
+  }
+  var h = histSel + '<div class="cards">'
+    +kpi('本期入职', joins.length+'人', label, joins, '本期入职（'+label+'）')
+    +kpi('本期离职', lvs.length+'人', label, lvs, '本期离职（'+label+'）')
     +kpi('净增', (joins.length-lvs.length>=0?'+':'')+(joins.length-lvs.length)+'人','入职-离职')
     +kpi('离职≤30天', flashList.length+'人','闪离', flashList, '入职30天内闪离')
     +kpi('平均在职', fmt1(avg(lvs.map(function(l){return l.onJobDays;})))+'天','离职人员', lvs, '本期离职人员')
     +'</div>';
   h += '<div class="grid2">';
-  h += '<div class="panel"><h3>当月入职明细（'+timeLabel()+' · '+joins.length+'人 · 含当月入职当月离职）</h3><div class="twrap"><table><thead><tr><th>姓名</th><th>状态</th><th>级别</th><th>岗位</th><th>'+(org==='lanjin'?'项目':'仓库')+'</th><th>入职日期</th><th>在职时间(天)</th><th>试用/转正</th></tr></thead><tbody>'
+  h += '<div class="panel"><h3>入职明细（'+label+' · '+joins.length+'人 · 含当月入职当月离职）</h3><div class="twrap"><table><thead><tr><th>姓名</th><th>状态</th><th>级别</th><th>岗位</th><th>'+(org==='lanjin'?'项目':'仓库')+'</th><th>入职日期</th><th>在职时间(天)</th><th>试用/转正</th></tr></thead><tbody>'
     + (joins.length ? joins.sort(function(a,b){return (b.entryDate||'').localeCompare(a.entryDate||'');}).map(function(s){
         var days = s.entryDate ? Math.round((new Date()-new Date(s.entryDate))/86400000) : null;
         var st = s.status==='已离' ? '<span class="tag tg-gray">已离</span>' : '<span class="tag tg-green">在职</span>';
-        return '<tr><td>'+esc(s.name)+'</td><td>'+st+'</td><td>'+esc(s._rank)+'</td><td>'+esc(s._posRaw)+'</td><td>'+esc(s._proj)+'</td><td>'+esc(s.entryDate)+'</td><td>'+esc(days)+'</td><td>'+esc(s.probationStatus)+'</td></tr>';
+        var d2 = (s.status==='已离' && s.onJobDays!=null) ? s.onJobDays : days;
+        return '<tr><td>'+esc(s.name)+'</td><td>'+st+'</td><td>'+esc(s._rank)+'</td><td>'+esc(s._posRaw)+'</td><td>'+esc(s._proj)+'</td><td>'+esc(s.entryDate)+'</td><td>'+esc(d2)+'</td><td>'+esc(s.probationStatus)+'</td></tr>';
       }).join('') : '<tr><td colspan="8" class="empty">本期无入职</td></tr>')
     +'</tbody></table></div></div>';
-  h += '<div class="panel"><h3>当月离职明细（'+timeLabel()+' · '+lvs.length+'人）</h3>'
+  h += '<div class="panel"><h3>离职明细（'+label+' · '+lvs.length+'人）</h3>'
     + (hasReason?'':'<div class="note">※ 离职原因/级别/岗位需导入钉钉后台离职表（右上角"导入离职原因表"），导入后自动合并显示。</div>')
     +'<div class="twrap"><table><thead><tr><th>姓名</th><th>离职原因</th><th>级别</th><th>岗位</th><th>部门</th><th>入职日期</th><th>离职日期</th><th>在职时间(天)</th></tr></thead><tbody>'
     + (lvs.length ? lvs.sort(function(a,b){return (b.resignDate||'').localeCompare(a.resignDate||'');}).map(function(l){
@@ -1003,8 +1011,8 @@ function vRecruit(){
       }).join('') : '<tr><td colspan="8" class="empty">本期无离职</td></tr>')
     +'</tbody></table></div></div>';
   h += '</div>';
-  h += '<div class="panel"><h3>离职深度复盘（'+timeLabel()+'）</h3>'+leaveAnalysis(org, lvs, hasReason)+'</div>';
-  h += reasonLizhiSection();
+  h += '<div class="panel"><h3>离职深度复盘（'+label+'）</h3>'+leaveAnalysis(org, lvs, hasReason)+'</div>';
+  h += (useHist ? '<div class="note" style="background:var(--amber-l,#fffbeb);padding:10px 14px;border-radius:8px;margin-bottom:12px">⚠ <b>'+label+'为历史月份</b>：仅含 HR 台账《离职明细2026》离职记录，离职原因/级别/岗位维度待补录；入职 = 花名册在职 + 台账「入职即离」。看板主口径（本月）不受影响。</div>' : reasonLizhiSection());
   return h;
 }
 function vRecruit2(){
@@ -1677,6 +1685,8 @@ document.querySelectorAll('.orgtab').forEach(function(el){
   el.onclick=function(){ document.querySelectorAll('.orgtab').forEach(function(x){x.classList.remove('on');}); el.classList.add('on'); state.org=el.dataset.org; buildFilters(); render(); };
 });
 ['f-time','f-proj','f-rank','f-pos'].forEach(function(id){ document.getElementById(id).onchange=render; });
+/* 历史月份下拉（动态生成于 vRecruit）用事件委托绑定，避免元素重建后丢失监听 */
+document.addEventListener('change', function(e){ if(e.target && e.target.id==='f-hist'){ state.histMonth = e.target.value; render(); } });
 document.getElementById('f-name').oninput=function(){ render(); };
 if(D){ buildFilters(); }
 render();
@@ -1686,11 +1696,6 @@ window.AUTH = null;
 function orgName(o){ return o==='lanjin' ? '蓝锦' : o==='zixian' ? '紫弦' : o; }
 function applyAuth(){
   var a = window.AUTH; if(!a) return;
-  /* 顶部显示数据更新时间，让刷新状态肉眼可见（破 CDN 缓存感知盲区） */
-  try {
-    var mi = document.getElementById('meta-info');
-    if (mi) mi.textContent = '数据更新于 ' + (window.__GEN_AT__ || (window.HR_DATA && window.HR_DATA.generatedAt) || '—');
-  } catch(e){}
   /* 组织可见范围：不在范围内的 tab 隐藏，默认切到首个可见组织 */
   var orgs = (a.orgs && a.orgs.length) ? a.orgs : ['lanjin','zixian'];
   var firstOk = null;
@@ -1720,17 +1725,17 @@ function applyAuth(){
   }
   buildFilters(); render();
 }
-/* 静态免费版：无后端，认证完全走前端密码门（#hrGate + localStorage）。
-   登录成功后由底部 hrGate 脚本调用 loginAs() -> applyAuth() 渲染，不再请求 /api/me。 */
+fetch('/api/me')
+  .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+  .then(function(d){ window.AUTH = d.me; applyAuth(); })
+  .catch(function(){ window.location.href = '/login'; });
 
 function doLogout(){
-  try{ localStorage.removeItem('hr_gate'); localStorage.removeItem('hr_user'); }catch(e){}
-  window.location.reload();
+  fetch('/api/logout', { method:'POST' }).then(function(){ window.location.href = '/login'; });
 }
 
 /* 管理员：账号管理弹窗 */
 function openAdmin(){
-  alert('当前为静态免费版，账号管理（增删/重置密码）暂不可用；\n如需调整账号，请联系管理员在源码 ACCOUNTS 中维护。'); return;
   fetch('/api/users').then(function(r){ return r.json(); }).then(function(d){
     if(!d.ok){ alert(d.msg || '无权限'); return; }
     var rows = (d.users || []).map(function(u){
@@ -1783,39 +1788,5 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', function(){ navigator.serviceWorker.register('/sw.js').catch(function(){}); });
 }
 </script>
-
-<script>
-(function(){
-  var ACCOUNTS = {
-    '韩鹏超':'521csl!@','杨松':'yangsong','肖换换':'xiaoxiao','卓峰':'zhuofeng',
-    '老梅':'laomei','罗娜':'luona','锦书':'jinshu','李珍':'lizhen'
-  };
-  var ADMIN = { '韩鹏超':1, '老梅':1 };
-  var gate = document.getElementById('hrGate');
-  function loginAs(u){
-    try{ localStorage.setItem('hr_gate','1'); localStorage.setItem('hr_user', u); }catch(e){}
-    if(gate) gate.style.display = 'none';
-    window.AUTH = { username:u, name:u, role: ADMIN[u] ? 'admin' : 'viewer', orgs:['lanjin','zixian'] };
-    applyAuth();
-  }
-  function tryLogin(){
-    var u=document.getElementById('hrUser').value.trim();
-    var p=document.getElementById('hrPass').value;
-    var err=document.getElementById('hrErr');
-    if(ACCOUNTS[u] && ACCOUNTS[u]===p){ loginAs(u); }
-    else { err.textContent='账号或密码错误'; }
-  }
-  try {
-    if(localStorage.getItem('hr_gate')==='1'){
-      var u = localStorage.getItem('hr_user') || '';
-      if(u && ACCOUNTS[u]){ loginAs(u); }
-      else { try{ localStorage.removeItem('hr_gate'); }catch(e){} if(gate) gate.style.display='flex'; }
-    }
-  } catch(e){}
-  document.getElementById('hrBtn').addEventListener('click', tryLogin);
-  document.getElementById('hrPass').addEventListener('keydown', function(e){ if(e.key==='Enter') tryLogin(); });
-})();
-</script>
-
 </body>
 </html>
