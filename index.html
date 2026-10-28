@@ -211,7 +211,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 <script>
 // 强制刷新数据文件，避免浏览器/PWA/Railway缓存旧版数据
 (function(){
-  var v = '202610281113'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202610281410'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
@@ -515,6 +515,20 @@ function resetFilters(){
 /* ===== 下钻：任何数字点击可查看对应人员 ===== */
 var DRILL = {}, drillSeq = 0;
 function reg(list, title){ var id='dr'+(drillSeq++); DRILL[id]={list:list||[], title:title||''}; return id; }
+/* 职位归类（数据来源：钉钉-智能人事-花名册-职位字段）
+   口径（用户 2026-10-28 拍板）：挽单客服/售前客服/售后客服/综合客服/电话客服等含「客服」→ 客服；
+   组长/储备组长/实习组长等含「组长」→ 组长；主管/挽单主管/高级主管等含「主管」→ 主管；
+   经理/储备经理等含「经理」→ 经理。
+   优先级：经理 > 主管 > 组长 > 客服（如「客服组长」归组长、「客服经理」归经理、「挽单主管」归主管）。 */
+function posClassOf(pos){
+  pos = (pos==null?'':String(pos));
+  if(!pos) return null;
+  if(pos.indexOf('经理')>=0) return '经理';
+  if(pos.indexOf('主管')>=0) return '主管';
+  if(pos.indexOf('组长')>=0) return '组长';
+  if(pos.indexOf('客服')>=0) return '客服';
+  return null;
+}
 function showDrill(id){
   var d = DRILL[id]; if(!d) return;
   document.getElementById('people-title').textContent = d.title+'（'+d.list.length+'人）';
@@ -899,6 +913,13 @@ function vView2Zx(){
     if(flash90>=3) advice.push('闪离'+flash90+'人，检查招聘承诺与岗位实际的落差');
     if(avgTen<0.5 && on.length>=10) advice.push('平均司龄不足半年，骨干沉淀不足，建议设立老带新激励');
     if(!advice.length) advice.push('指标健康，保持现有节奏，关注骨干保留与梯队建设');
+    /* 职位归类：组长/主管/经理（钉钉花名册-职位，点数字下钻名单） */
+    var clsHtml = '';
+    ['组长','主管','经理'].forEach(function(cl){
+      var lst = on.filter(function(s){ return posClassOf(s._posRaw||s.position||s._pos)===cl; });
+      var cid = reg(lst, t+' · '+cl+'（按职位）');
+      clsHtml += '<div style="cursor:pointer" onclick="showDrill(\''+cid+'\')" title="点击查看名单（钉钉花名册-职位归类）"><div class="mv">'+lst.length+'</div><div class="mt">'+cl+'</div></div>';
+    });
     h += '<div class="teamcard"><div class="hd"><div class="nm">'+esc(t)+'</div><div class="hbadge" style="color:'+grade[1]+'">'+score+'<span style="font-size:12px;font-weight:400;color:var(--muted)"> /100</span></div></div>'
       +'<div style="margin-bottom:8px"><span class="tag" style="background:'+grade[1]+'20;color:'+grade[1]+'">'+grade[0]+'</span></div>'
       +'<div class="mini">'
@@ -908,6 +929,7 @@ function vView2Zx(){
       +'<div><div class="mv">'+rate90+'%</div><div class="mt">近90天流失率</div></div>'
       +'<div><div class="mv">'+probR+'%</div><div class="mt">试用占比</div></div>'
       +'<div><div class="mv">'+fmt1(avgTen)+'</div><div class="mt">平均司龄(年)</div></div>'
+      + clsHtml
       +'</div><div class="insight" style="margin:0">'+advice.map(function(a){return '· '+a;}).join('<br>')+'</div></div>';
   });
   h += '</div></div>';
@@ -943,6 +965,13 @@ function vView2LJ(){
     var rateMonth = pct(lvList.length, on.length + lvList.length);
     var probList = on.filter(function(s){return s.probationStatus==='试用';});
     var idProb = reg(probList, td.label+' · 试用期人员');
+    /* 职位归类：客服/组长/主管/经理（钉钉花名册-职位，点数字下钻名单） */
+    var clsHtml = '';
+    ['客服','组长','主管','经理'].forEach(function(cl){
+      var lst = on.filter(function(s){ return posClassOf(s._posRaw||s.position||s._pos)===cl; });
+      var cid = reg(lst, td.label+' · '+cl+'（按职位）');
+      clsHtml += '<div style="cursor:pointer" onclick="showDrill(\''+cid+'\')" title="点击查看名单（钉钉花名册-职位归类）"><div class="mv">'+lst.length+'</div><div class="mt">'+cl+'</div></div>';
+    });
     var probR = pct(probList.length, on.length);
     var tens = on.map(function(s){return s.tenureYears;}).filter(function(x){return x!=null;});
     var avgTen = tens.length? tens.reduce(function(a,b){return a+b;},0)/tens.length : 0;
@@ -977,6 +1006,7 @@ function vView2LJ(){
       + '<div style="cursor:pointer" onclick="showDrill(\''+idProb+'\')" title="点击查看试用期名单"><div class="mv" style="color:var(--amber)">'+probList.length+'</div><div class="mt">试用期人员</div></div>'
       + '<div><div class="mv">'+probR+'%</div><div class="mt">试用占比</div></div>'
       + '<div><div class="mv">'+fmt1(avgTen)+'</div><div class="mt">平均司龄(年)</div></div>'
+      + clsHtml
       + '</div>'
       + '<div class="insight" style="margin:6px 0 2px">'+advice.map(function(a){return '· '+a;}).join('<br>')+'</div>'
       + '<div class="panel" style="margin:8px 0 0"><h3 style="font-size:13px">'+grpTitle+'（'+on.length+' 人在职 · 点柱状条下钻姓名）</h3>'+bars(sg, td.color, null, td.label+' · ')+'</div>'
