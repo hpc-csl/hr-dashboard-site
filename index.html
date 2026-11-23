@@ -120,7 +120,10 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 .v4table .v4c{cursor:pointer;color:#1d4ed8}
 .v4table .v4c:hover{background:#e8f0ff}
 .v4table .v4t{font-weight:700;background:#f8fafc}
+.v4table .v4x{background:#f5f9ff;border-left:2px solid #b9cdf5}
+.v4table thead th.v4x{background:#e0eaff;color:#1d4ed8}
 .v4table .v4all td{background:#eef6ff;font-weight:700;border-top:2px solid #c7d6f5}
+.v4table .v4all td.v4x{background:#dce9ff;border-left:2px solid #b9cdf5}
 .subhead{font-size:14px;font-weight:700;color:#2b3a55;margin:18px 0 4px;border-left:4px solid #3b82f6;padding-left:8px}
 </style>
 </head>
@@ -211,7 +214,7 @@ tbody .sum{font-weight:700;background:var(--sum-bg,#f0f4ff);border-top:2px solid
 <script>
 // 强制刷新数据文件，避免浏览器/PWA/Railway缓存旧版数据
 (function(){
-  var v = '202611231753'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
+  var v = '202611231826'; // 兜底（本部署时版本，仅当 version.json 拉取失败时启用）
   try {
     var x = new XMLHttpRequest();
     x.open('GET', 'version.json?t=' + Date.now(), false);
@@ -265,6 +268,16 @@ function posMerge(p, org){
     if(x==='组长' || x==='电商客服组长') x = '客服组长';
     if(x==='经理') x = '客服经理';
     if(x==='主管') x = '客服主管';
+  } else {
+    /* 紫弦（用户 2026-11-23 口径）：职位只要包含「经理 / 主管 / 组长 / 专员」，
+       不管前面带什么修饰词（高级主管 / 物控高级主管 / 综合二部主管 / 发运主管 / 中级发运专员 …）
+       全部统称为该职称，岗位筛选下拉里只显示一个「主管」「专员」「组长」「经理」。
+       优先级 经理 > 主管 > 组长 > 专员，保证一人只落一类；明细表仍显示原始职位 _posRaw。 */
+    var raw = String(p);
+    if(raw.indexOf('经理')>=0) return '经理';
+    if(raw.indexOf('主管')>=0) return '主管';
+    if(raw.indexOf('组长')>=0) return '组长';
+    if(raw.indexOf('专员')>=0) return '专员';
   }
   return x;
 }
@@ -437,7 +450,7 @@ function joinListFor(org, range){
     var pr = s._proj||s.project, rk=s._rank||s.rank, ps=s._posRaw||s.position, tm=s._team||s.team;
     if(p!=='all' && pr!==p && tm!==p) return false;
     if(r!=='all' && rk!==r) return false;
-    if(pos!=='all' && ps!==pos && s._posClass!==pos) return false;
+    if(pos!=='all' && ps!==pos && s._pos!==pos && s._posClass!==pos) return false;
     if(nm && (s.name||'').indexOf(nm)<0) return false;
     return true;
   });
@@ -495,10 +508,12 @@ function buildFilters(){
   ranks.forEach(function(r){ realRanks[r]=1; });
   rankSel.innerHTML = '<option value="all">全部</option>' + Object.keys(realRanks).sort().map(function(r){return '<option>'+r+'</option>';}).join('');
   var realPos = {}; staffOf(org).forEach(function(s){ if(s._pos) realPos[s._pos]=1; });
-  var posList = Object.keys(realPos).sort();
+  /* 紫弦：专员/组长/主管/经理 已由 posMerge 按关键字统一归并，分类项同步精简为 4 个统称 */
   var clsList = org==='lanjin'
     ? ['售前客服','售后客服','综合客服','挽单专员','AI训练师','质检','审核','组长','主管','经理','人资行政','商务BD','其他']
-    : ['初级专员','中级专员','高级专员','专员（未定级）','组长','主管','经理','人资行政','其他'];
+    : ['专员','组长','主管','经理','人资行政','其他'];
+  /* 具体职位里去掉已在「分类」出现的同名项，避免下拉重复 */
+  var posList = Object.keys(realPos).filter(function(p){ return clsList.indexOf(p)<0; }).sort();
   posSel.innerHTML = '<option value="all">全部</option>'
     + '<optgroup label="分类">' + clsList.map(function(p){return '<option>'+p+'</option>';}).join('') + '</optgroup>'
     + '<optgroup label="具体职位">' + posList.map(function(p){return '<option>'+esc(p)+'</option>';}).join('') + '</optgroup>';
@@ -1662,9 +1677,34 @@ function v4Aggregate(staff, groupFn, colFn, cols, explicitGroups){
   });
   return {rows:rows, all:all};
 }
-function v4Render(title, dimLabel, cols, agg){
+/* 视图4 附加职位统计列（用户 2026-11-23）：按「职位名称包含关键字」统计，
+   与前面按职级 / P级分列的口径相互独立；同一人按姓名去重，避免双账号重复计数。 */
+var V4_MGR_COLS = [
+  {label:'组长', kw:'组长'},
+  {label:'主管', kw:'主管'},
+  {label:'经理', kw:'经理'}
+];
+function uniqPeople(arr){
+  var seen={}, out=[];
+  arr.forEach(function(s){ var k=s.name||s.userId||''; if(!seen[k]){ seen[k]=1; out.push(s); } });
+  return out;
+}
+function v4BagPeople(bag, cols){
+  var out=[]; cols.forEach(function(c){ (bag[c]||[]).forEach(function(s){ out.push(s); }); });
+  return out;
+}
+function v4ExtraCells(ppl, extra, title, scope, cls){
+  return extra.map(function(e){
+    var arr = ppl.filter(function(s){ return (s.position||'').indexOf(e.kw)>=0; });
+    var id = reg(arr, title+' · '+scope+' · '+e.label+'（职位）');
+    return '<td class="'+cls+' v4x" onclick="showDrill(\''+id+'\')" title="职位含「'+e.label+'」'+arr.length+'人 · 点击下钻">'+arr.length+'</td>';
+  }).join('');
+}
+function v4Render(title, dimLabel, cols, agg, extra){
+  extra = extra || [];
+  var exHead = extra.map(function(e){ return '<th class="v4x" title="职位口径：职位名称包含「'+e.label+'」即统计，与前侧职级列独立">'+esc(e.label)+'</th>'; }).join('');
   var gkeys=Object.keys(agg.rows).sort(function(a,b){return agg.rows[b].count-agg.rows[a].count;});
-  var head='<tr><th class="v4l">'+esc(dimLabel)+'</th>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'<th>合计</th></tr>';
+  var head='<tr><th class="v4l">'+esc(dimLabel)+'</th>'+cols.map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+exHead+'<th>合计</th></tr>';
   var body='';
   gkeys.forEach(function(g){
     var row=agg.rows[g];
@@ -1673,11 +1713,13 @@ function v4Render(title, dimLabel, cols, agg){
       var id=reg(arr, title+' · '+g+' · '+c);
       return '<td class="v4c" onclick="showDrill(\''+id+'\')" title="'+arr.length+'人 · 点击下钻">'+arr.length+'</td>';
     }).join('');
-    body+='<tr><td class="v4l" title="共'+gkeys.length+'个维度">'+esc(g)+'</td>'+cells+'<td class="v4t">'+row.count+'</td></tr>';
+    var exCells = extra.length ? v4ExtraCells(uniqPeople(v4BagPeople(row, cols)), extra, title, g, 'v4c') : '';
+    body+='<tr><td class="v4l" title="共'+gkeys.length+'个维度">'+esc(g)+'</td>'+cells+exCells+'<td class="v4t">'+row.count+'</td></tr>';
   });
   var totalPeople=0;
   var allCells=cols.map(function(c){ var arr=agg.all[c]||[]; totalPeople+=arr.length; var id=reg(arr, title+' · 整体 · '+c); return '<td class="v4t" onclick="showDrill(\''+id+'\')" title="全组织 '+arr.length+'人">'+arr.length+'</td>'; }).join('');
-  body+='<tr class="v4all"><td class="v4l">全'+esc(dimLabel)+'(合计)</td>'+allCells+'<td class="v4t">'+totalPeople+'</td></tr>';
+  var allEx = extra.length ? v4ExtraCells(uniqPeople(v4BagPeople(agg.all, cols)), extra, title, '整体', 'v4t') : '';
+  body+='<tr class="v4all"><td class="v4l">全'+esc(dimLabel)+'(合计)</td>'+allCells+allEx+'<td class="v4t">'+totalPeople+'</td></tr>';
   return '<table class="v4table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
 }
 function vView4(){ return state.org==='zixian' ? vView4ZX() : vView4LJ(); }
@@ -1707,7 +1749,9 @@ function vView4LJ(){
   var h='<div class="panel"><h3>蓝锦科技 · 项目执行小组人力结构分析（按小组）</h3>'
     +'<div class="note">维度「小组」<b>动态从钉钉通讯录部门树识别</b>（含项目执行组、职能组、空组），到「海洋至尊组 / EHD组 / 抖快海洋至尊组」这类末级节点；售前/售后/天猫专项为组内拆分标签，已自动归并到所属小组。共 <b>'+gN+'</b> 个小组，合计在职 <b>'+staff.length+'</b> 人（与总看板蓝锦在职一致）。直接挂在部门/项目/根节点、未归入任何具体小组的人员，单列「未归入具体小组」。司龄按花名册入职日期算至今天；P级取花名册职级（rankNorm：P1-P6 + 组长/主管/经理/职员/未定级）。<b>小组增减随通讯录自动更新</b>。</div>';
   h+='<div class="subhead">一、司龄时间分布（各小组）</div>'+v4Render('蓝锦司龄','小组',tenCols,v4Aggregate(staff,ljGroup,tenureBucket,tenCols,allGroups));
-  h+='<div class="subhead">二、P级人力分布（各小组）</div>'+v4Render('蓝锦P级','小组',pCols,v4Aggregate(staff,ljGroup,ljRank,pCols,allGroups));
+  h+='<div class="subhead">二、P级人力分布（各小组）</div>'
+    +'<div class="note">末三列「<b>组长 / 主管 / 经理</b>」为<b>职位口径</b>：职位名称中包含对应关键字即统计（如「客服主管」「高级主管」「实习客服主管」全部计入主管，「储备组长」「AI训练师组长」全部计入组长），与前面 P级 / 职级分列相互独立、按姓名去重；点击数字可查看名单。此三列是附加统计，不参与「合计」列求和。</div>'
+    +v4Render('蓝锦P级','小组',pCols,v4Aggregate(staff,ljGroup,ljRank,pCols,allGroups),V4_MGR_COLS);
   return h+'</div>';
 }
 function vView4ZX(){
